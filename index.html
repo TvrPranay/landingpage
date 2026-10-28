@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Teklozy — A journey to your future</title>
+<meta name="description" content="Follow Teko through 10 stages, build real skills, create real opportunities, and become the best version of yourself.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="sky" aria-hidden="true"><i class="c c1"></i><i class="c c2"></i><i class="c c3"></i><i class="c c4"></i></div>
+
+<header class="nav" id="nav">
+  <a class="logo" href="#top" data-go="top">Teklozy</a>
+  <nav class="links" aria-label="Primary">
+    <a href="#top" data-go="top" class="on">Home</a>
+    <a href="#" data-go="1">Explore Careers</a>
+    <a href="#" data-go="4">How it works</a>
+    <a href="#" data-go="end">About</a>
+  </nav>
+  <div class="nav-r">
+    <button class="icon-btn" aria-label="Search" data-toast="Search is coming soon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 16l4.5 4.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+    <button class="btn btn-primary sm" data-go="1">Start your journey <svg viewBox="0 0 16 16"><path d="M3 8h9M8.5 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  </div>
+  <div class="bar"><i id="bar"></i></div>
+</header>
+
+<main class="journey" id="journey">
+  <div class="decor" id="decor" aria-hidden="true"></div>
+  <div class="jwrap" id="jwrap">
+    <section class="hero" id="hero">
+      <span class="tag rise" style="--d:.05s">Your career journey starts here</span>
+      <h1><span class="rise" style="--d:.12s">Not just learning.</span><span class="rise" style="--d:.2s">A journey to</span><span class="rise blue" style="--d:.28s">your future.</span></h1>
+      <p class="rise" style="--d:.36s">Follow Teko through 10 stages, build real skills, create real opportunities, and become the best version of yourself.</p>
+      <div class="cta rise" style="--d:.44s">
+        <button class="btn btn-primary" data-go="1">Start your journey <svg viewBox="0 0 16 16"><path d="M3 8h9M8.5 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <button class="btn btn-ghost" data-toast="Intro video coming soon"><svg viewBox="0 0 16 16"><path d="M5 3.5v9l7.5-4.5z" fill="currentColor"/></svg> Watch video</button>
+      </div>
+      <div class="proof rise" style="--d:.52s">
+        <div class="avs"><i style="--a:#f6c9a8;--b:#3d5a99"></i><i style="--a:#e5b08c;--b:#2b3f66"></i><i style="--a:#f2d0b8;--b:#5a4a8f"></i><i style="--a:#d9a07e;--b:#1f2f55"></i></div>
+        <div><b>10K+</b><small>curious minds already on the journey</small></div>
+      </div>
+    </section>
+
+    <div class="sign start" id="startSign"><span>START</span></div>
+    <div class="sign tomorrow" id="tomorrow"><span>A Brighter<br>Tomorrow</span></div>
+    <svg id="road" aria-hidden="true"></svg>
+    <div id="stages"></div>
+    <div class="arch" id="arch"><span>YOUR<br>FUTURE</span></div>
+  </div>
+</main>
+
+<section class="finale" id="finale">
+  <div class="finale-card">
+    <div>
+      <span class="tag">All 10 stages complete</span>
+      <h2>Your next chapter <em>starts here.</em></h2>
+      <p>You explored. You learned. You built. Now it's time to grow.</p>
+    </div>
+    <div class="cta">
+      <button class="btn btn-primary" data-toast="Welcome aboard! Sign-ups open soon.">Claim Your Career Spot <svg viewBox="0 0 16 16"><path d="M3 8h9M8.5 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      <button class="btn btn-ghost" data-go="top"><svg viewBox="0 0 16 16"><path d="M13 8a5 5 0 1 1-1.6-3.7M13 2.5v3h-3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg> Back to Start</button>
+    </div>
+  </div>
+  <div class="stats" id="stats"></div>
+</section>
+
+<div class="bubble" id="bubble" role="status" aria-live="polite"></div>
+<div class="toast" id="toast"></div>
+<canvas id="fx" aria-hidden="true"></canvas>
+<canvas id="teko" aria-hidden="true"></canvas>
+
+<script src="js/app.js"></script>
+</body>
+</html>
