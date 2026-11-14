@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Production builds
+dist/
+**/dist/
+
+# Python virtual environment & cache
+.venv/
+__pycache__/
+**/__pycache__/
+*.pyc
+
+# Local database & environment variables
+*.db
+backend/teklozy.db
+.env
+*.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Root screenshots & archives
+/test_*.png
+/*.zip
+/scratch/
+/prepare_crops.js
