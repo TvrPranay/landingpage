@@ -6,7 +6,20 @@ import {
 } from 'lucide-react';
 
 export default function GenericPage({ type }) {
-  const { currentRoute, navigate, milestones, xp, displayName, email, unlockedLevel, selectedPath, isLevel1Complete } = useApp();
+  const {
+    currentRoute,
+    navigate,
+    milestones,
+    xp,
+    awardXp,
+    displayName,
+    email,
+    unlockedLevel,
+    unlockLevel,
+    selectedPath,
+    isLevel1Complete,
+    triggerToast
+  } = useApp();
 
   if (type === 'level') {
     const lvlNum = parseInt(currentRoute.path.replace('level/', ''), 10) || 1;
@@ -15,6 +28,77 @@ export default function GenericPage({ type }) {
     const isUnlocked = lvlNum <= effectiveUnlocked;
     const isDone = lvlNum < effectiveUnlocked;
     const isCurrent = lvlNum === effectiveUnlocked;
+
+    // Level-specific content data
+    const levelContentMap = {
+      1: {
+        focus: 'Career Specialization & Disciplines',
+        overview: 'Explore core tech disciplines (Software Engineering vs. Artificial Intelligence) and complete foundational curriculum modules.',
+        tasks: ['Complete active career path modules', 'Earn foundational XP bounties', 'Establish learning streak']
+      },
+      2: {
+        focus: 'Core Programming & Data Structures',
+        overview: 'Master computational reasoning, control flow, functions, memory models, and fundamental data structures.',
+        tasks: ['Practice Python algorithms in CodeLab IDE', 'Pass automated unit tests with Socratic AI Mentor', 'Analyze Big-O time and space complexity']
+      },
+      3: {
+        focus: 'Advanced Systems & Architecture',
+        overview: 'Deep-dive into object-oriented patterns, asynchronous execution, relational database schemas, and recursive data structures.',
+        tasks: ['Build binary trees and graph traversals', 'Implement asynchronous event loops', 'Design scalable relational schemas']
+      },
+      4: {
+        focus: 'Full-Stack Application Engineering',
+        overview: 'Craft production-grade software applications with client-side reactive frameworks, backend APIs, and database migrations.',
+        tasks: ['Design RESTful & GraphQL web endpoints', 'Implement user authentication & access controls', 'Integrate production Docker containers']
+      },
+      5: {
+        focus: 'Engineering Peer Collaboration & Mentorship',
+        overview: 'Engage with peer study cohorts, participate in synchronous architecture teardowns, and complete guided mentor code reviews.',
+        tasks: ['Conduct peer pull-request code reviews', 'Attend live mentor architecture office hours', 'Form sprint teams for collaborative building']
+      },
+      6: {
+        focus: 'Open-Source Production & Showcase',
+        overview: 'Publish documented, test-covered open-source software libraries and deploy production portfolio projects with CI/CD.',
+        tasks: ['Publish production GitHub repositories', 'Configure automated CI/CD test workflows', 'Record interactive video architecture demos']
+      },
+      7: {
+        focus: 'Technical Whiteboarding & Interview Prep',
+        overview: 'Master algorithmic problem solving, mock technical interviews, and systems design whiteboard architecture evaluations.',
+        tasks: ['Solve blind-75 algorithmic challenge sets', 'Simulate live technical behavioral mock interviews', 'Design high-availability distributed systems']
+      },
+      8: {
+        focus: 'Career Matching & Technical Applications',
+        overview: 'Target curated high-growth engineering roles with automated competency verification directly presented to hiring partners.',
+        tasks: ['Generate verified Teklozy Competency Transcript', 'Match with hiring network partner opportunities', 'Submit direct engineering applications']
+      },
+      9: {
+        focus: 'Executive Coaching & Negotiation',
+        overview: 'Work 1-on-1 with senior engineering leaders on compensation benchmarking, leadership scope, and career trajectory.',
+        tasks: ['1-on-1 career strategy coaching session', 'Benchmark target salary & equity ranges', 'Evaluate competing engineering offers']
+      },
+      10: {
+        focus: 'The Teklozy Summit & Alumni Syndicate',
+        overview: 'Ascend to the mountain peak! Join the elite Teklozy Alumni Network, mentor emerging students, and access founding opportunities.',
+        tasks: ['Receive verified Summit Fellow credential', 'Join global alumni investment & engineering syndicate', 'Mentor aspiring students ascending the mountain']
+      }
+    };
+
+    const details = levelContentMap[lvlNum] || levelContentMap[2];
+
+    const handleAdvanceMilestone = () => {
+      const nextLvl = lvlNum + 1;
+      unlockLevel(nextLvl);
+      awardXp(250);
+
+      if (lvlNum < 10) {
+        const nextMilestone = milestones.find(m => m.level === nextLvl);
+        triggerToast(`🎉 Level ${lvlNum} Complete! Level ${nextLvl}: ${nextMilestone?.name || ''} is now UNLOCKED! (+250 XP)`);
+        navigate(`level/${nextLvl}`);
+      } else {
+        triggerToast('🏆 THE TEKLOZY SUMMIT REACHED! All 10 Career Levels Conquered! (+1,000 XP)');
+        navigate('home');
+      }
+    };
 
     return (
       <div className="generic-workspace-page">
@@ -27,21 +111,21 @@ export default function GenericPage({ type }) {
           <span className="breadcrumb-current">Level {lvlNum}: {milestone.name}</span>
         </div>
 
-        <section className={`level-overview-hero ${isUnlocked ? 'hero-unlocked' : 'hero-locked'}`}>
+        <section className={`level-overview-hero ${isDone ? 'hero-done' : isCurrent ? 'hero-unlocked' : 'hero-locked'}`}>
           <div className="level-badge-large">
             <span>LVL</span>
             <strong>{lvlNum}</strong>
           </div>
           <div className="level-hero-text">
             <span className="hero-eyebrow-chip">
-              {isDone ? 'COMPLETED MILESTONE' : isCurrent ? 'CURRENT ACTIVE LEVEL' : 'LOCKED CHECKPOINT'}
+              {isDone ? '✓ COMPLETED MILESTONE' : isCurrent ? '● ACTIVE CHECKPOINT' : '🔒 LOCKED STATION'}
             </span>
             <h1>Level {lvlNum} · {milestone.name}</h1>
             <p>{milestone.desc}</p>
             <div className="level-rewards-strip">
               <span><Zap size={14} /> +250 XP Reward</span>
-              <span><Trophy size={14} /> Level {lvlNum} Badge</span>
-              <span><CheckCircle2 size={14} /> Verified Competency</span>
+              <span><Trophy size={14} /> Level {lvlNum} Verified Badge</span>
+              <span><CheckCircle2 size={14} /> Technical Competency</span>
             </div>
           </div>
         </section>
@@ -50,11 +134,15 @@ export default function GenericPage({ type }) {
           {isUnlocked ? (
             lvlNum === 1 ? (
               <div className="level-active-prompt-box">
-                <h3>Level 1 Focus: Define Your Specialization</h3>
-                <p>Explore software engineering versus artificial intelligence systems and complete your foundational modules.</p>
+                <div className="celebration-top-badge">
+                  <Sparkles size={15} className="sparkle-gold" />
+                  <span>{isDone ? 'MILESTONE COMPLETED' : 'ACTIVE CAREER TRACK'}</span>
+                </div>
+                <h3>Level 1: Discover · Career Path Specialization</h3>
+                <p>{details.overview}</p>
                 <div className="level-btn-row">
                   <button className="btn-level-primary" onClick={() => navigate(selectedPath ? `path/${selectedPath.id}` : 'discover')}>
-                    <span>{selectedPath ? 'Continue Curriculum' : 'Choose Career Path'}</span>
+                    <span>{selectedPath ? 'Continue Curriculum Modules' : 'Choose Career Path'}</span>
                     <ArrowRight size={15} />
                   </button>
                   <button className="btn-level-secondary" onClick={() => navigate('home')}>
@@ -66,12 +154,27 @@ export default function GenericPage({ type }) {
               <div className="level-unlocked-celebration-box">
                 <div className="celebration-top-badge">
                   <Sparkles size={15} className="sparkle-gold" />
-                  <span>{isDone ? 'MILESTONE COMPLETED' : 'MILESTONE UNLOCKED · ACTIVE CHECKPOINT'}</span>
+                  <span>
+                    {isDone
+                      ? '✓ MILESTONE VERIFIED & COMPLETED'
+                      : `● LEVEL ${lvlNum} ACTIVE CHECKPOINT`}
+                  </span>
                 </div>
-                <h3>Level {lvlNum}: {milestone.name} · Core Programming & Algorithms</h3>
-                <p>
-                  You have successfully ascended from Level 1! You are now eligible to build core programming proficiency, algorithm design patterns, and practical systems competencies.
-                </p>
+                <h3>Level {lvlNum}: {milestone.name} · {details.focus}</h3>
+                <p>{details.overview}</p>
+
+                {/* Technical objectives list */}
+                <div className="milestone-objectives-checklist">
+                  <h4>Core Objectives to Master</h4>
+                  <ul>
+                    {details.tasks.map((task, idx) => (
+                      <li key={idx}>
+                        <CheckCircle2 size={15} className="task-check-icon" />
+                        <span>{task}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
 
                 <div className="level-tracks-preview-grid">
                   <div className="level-feature-card">
@@ -95,7 +198,32 @@ export default function GenericPage({ type }) {
                   </div>
                 </div>
 
-                <div className="level-footer-nav">
+                {/* Milestone Completion & Progression Action */}
+                <div className="milestone-progression-cta-bar">
+                  {isCurrent && (
+                    <button
+                      className="btn-complete-milestone"
+                      onClick={handleAdvanceMilestone}
+                    >
+                      <span>
+                        {lvlNum < 10
+                          ? `Complete Level ${lvlNum} & Unlock Level ${lvlNum + 1}`
+                          : 'Reach the Teklozy Summit (Ascent Complete!)'}
+                      </span>
+                      <ArrowRight size={16} />
+                    </button>
+                  )}
+
+                  {isDone && lvlNum < 10 && (
+                    <button
+                      className="btn-level-primary"
+                      onClick={() => navigate(`level/${lvlNum + 1}`)}
+                    >
+                      <span>Ascend to Level {lvlNum + 1}: {milestones[lvlNum]?.name}</span>
+                      <ArrowRight size={15} />
+                    </button>
+                  )}
+
                   <button className="btn-level-secondary" onClick={() => navigate('home')}>
                     <ChevronLeft size={16} />
                     <span>Return to Summit Map</span>
@@ -106,12 +234,22 @@ export default function GenericPage({ type }) {
           ) : (
             <div className="level-locked-prompt-box">
               <div className="locked-icon-bubble"><Lock size={28} /></div>
-              <h3>Level {lvlNum} is Locked</h3>
-              <p>Complete all foundational modules in Level {lvlNum - 1} to automatically ascend and unlock this milestone.</p>
-              <button className="btn-level-primary" onClick={() => navigate('home')}>
-                <span>Return to Summit Map</span>
-                <ArrowRight size={15} />
-              </button>
+              <h3>Level {lvlNum}: {milestone.name} is Locked</h3>
+              <p>
+                Complete Level {effectiveUnlocked}: {milestones[effectiveUnlocked - 1]?.name || 'Current'} to ascend and unlock this mountain checkpoint.
+              </p>
+              <div className="level-btn-row">
+                <button
+                  className="btn-level-primary"
+                  onClick={() => navigate(`level/${effectiveUnlocked}`)}
+                >
+                  <span>Go to Active Station (Level {effectiveUnlocked})</span>
+                  <ArrowRight size={15} />
+                </button>
+                <button className="btn-level-secondary" onClick={() => navigate('home')}>
+                  <span>Return to Summit Map</span>
+                </button>
+              </div>
             </div>
           )}
         </div>

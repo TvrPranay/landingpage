@@ -19,7 +19,7 @@ const getApiUrl = () => {
 const API = getApiUrl();
 
 export default function CodeLabPage() {
-  const { xp, awardXp, triggerToast } = useApp();
+  const { xp, awardXp, triggerToast, unlockedLevel, unlockLevel } = useApp();
 
   // Active Mode: 'playground' or challenge ID
   const [activeMode, setActiveMode] = useState('target-sum');
@@ -266,7 +266,12 @@ export default function CodeLabPage() {
 
       if (data.all_passed) {
         awardXp(data.xp_awarded || 150);
-        triggerToast(`🎉 Challenge Accepted! +${data.xp_awarded || 150} XP added to your summit ascent!`);
+        if (unlockedLevel <= 2) {
+          unlockLevel(3);
+          triggerToast(`🎉 Challenge Accepted! Level 3: Learn Advanced is now UNLOCKED! (+${data.xp_awarded || 150} XP)`);
+        } else {
+          triggerToast(`🎉 Challenge Accepted! +${data.xp_awarded || 150} XP added to your summit ascent!`);
+        }
       } else {
         triggerToast(`Test failed: ${data.passed_count}/${data.total_tests} passed. Ask AI Mentor for hints!`);
       }

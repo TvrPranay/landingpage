@@ -5851,6 +5851,84 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: 0 4px 14px rgba(0, 118, 245, 0.45) !important;
 }
 
+/* Milestone Checklist & Dynamic Progression CTA Bar */
+.milestone-objectives-checklist {
+  background: var(--surface-card);
+  border: 1px solid var(--border-line);
+  border-radius: var(--radius-lg);
+  padding: 16px 20px;
+}
+
+.milestone-objectives-checklist h4 {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--text-main);
+  margin: 0 0 10px 0;
+}
+
+.milestone-objectives-checklist ul {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.milestone-objectives-checklist li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-body);
+}
+
+.task-check-icon {
+  color: #10b981;
+  flex-shrink: 0;
+}
+
+.milestone-progression-cta-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border-line);
+  margin-top: 12px;
+  flex-wrap: wrap;
+}
+
+.btn-complete-milestone {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 24px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, #0284c7, #0076f5);
+  color: #ffffff;
+  font-size: 13.5px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0, 118, 245, 0.35);
+  transition: all 0.2s ease;
+}
+
+.btn-complete-milestone:hover {
+  background: linear-gradient(135deg, #0369a1, #0060cc);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(0, 118, 245, 0.45);
+}
+
+.level-overview-hero.hero-done {
+  background: linear-gradient(135deg, #064e3b 0%, #065f46 60%, #047857 100%);
+}
+
+.level-overview-hero.hero-done .level-badge-large {
+  background: linear-gradient(135deg, #10b981, #059669);
+  border-color: #a7f3d0;
+}
+
 /* Profile Page */
 .profile-details-card {
   padding: 32px;
