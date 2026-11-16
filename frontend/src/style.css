@@ -1670,7 +1670,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .milestone-node-wrapper.has-active-tooltip {
-  z-index: 99 !important;
+  z-index: 9999 !important;
 }
 
 /* Floating Rich Tooltip with Adaptive Boundary Awareness */
@@ -1684,9 +1684,9 @@ h1, h2, h3, h4, h5, h6 {
   padding: 14px;
   color: #ffffff;
   box-shadow: 0 16px 36px rgba(0, 0, 0, 0.8), 0 0 20px rgba(56, 189, 248, 0.35);
-  z-index: 100 !important;
+  z-index: 10000 !important;
   pointer-events: none;
-  animation: popoverFade 0.15s ease;
+  animation: popoverFade 0.15s ease-out;
 }
 
 /* Vertical placement */
@@ -1720,8 +1720,8 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 @keyframes popoverFade {
-  from { opacity: 0; transform: translate(-50%, 6px); }
-  to { opacity: 1; transform: translate(-50%, 0); }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .popover-badge {
