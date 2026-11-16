@@ -7,9 +7,8 @@ import {
 
 const NAV_ITEMS = [
   { id: 'home', label: 'Home', icon: Home, route: 'home' },
-  { id: 'journey', label: 'My Journey', icon: Compass, route: 'discover' },
   { id: 'learn', label: 'Learn', icon: BookOpen, route: 'learn' },
-  { id: 'build', label: 'Build', icon: Code2, route: 'build', badge: 'New' },
+  { id: 'build', label: 'CodeLab', icon: Code2, route: 'build', badge: 'New' },
   { id: 'challenges', label: 'Challenges', icon: Trophy, route: 'challenges' }
 ];
 
@@ -27,24 +26,16 @@ export default function Sidebar() {
 
   const currentPath = currentRoute.path;
 
-  // Ensure mutually exclusive active state: only ONE item is active at a time
+  // Mutually exclusive active state
   const isNavActive = (item) => {
     if (item.id === 'home') {
-      return currentPath === 'home';
-    }
-    if (item.id === 'journey') {
-      return currentPath === 'discover' || currentPath.startsWith('path/') || currentPath.startsWith('level/');
+      return currentPath === 'home' || currentPath.startsWith('level/');
     }
     return currentPath === item.route;
   };
 
   const handleNavClick = (item) => {
-    if (item.id === 'journey') {
-      const target = selectedPath?.id ? `path/${selectedPath.id}` : 'discover';
-      navigate(target);
-    } else {
-      navigate(item.route);
-    }
+    navigate(item.route);
     setMobileMenuOpen(false);
   };
 

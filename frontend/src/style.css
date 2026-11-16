@@ -152,6 +152,15 @@ h1, h2, h3, h4, h5, h6 {
   padding: 20px 28px 48px;
 }
 
+.teklozy-main-viewport.viewport-home {
+  max-width: 100% !important;
+  padding: 0 !important;
+  height: calc(100vh - var(--topbar-height));
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
 /* --- Global Topbar --- */
 .global-topbar {
   height: var(--topbar-height);
@@ -174,21 +183,37 @@ h1, h2, h3, h4, h5, h6 {
   width: var(--sidebar-expanded-width);
   flex-shrink: 0;
   transition: width var(--transition-normal);
+  overflow: hidden;
 }
 
 .topbar-brand-area.is-collapsed {
   width: var(--sidebar-collapsed-width);
+  justify-content: center;
+  padding: 0 4px;
 }
 
 .topbar-logo-link {
   display: flex;
   align-items: center;
+  overflow: hidden;
+  height: 40px;
 }
 
 .topbar-logo-img {
-  height: 40px;
-  width: auto;
+  height: 38px;
+  width: 135px;
   object-fit: contain;
+  object-position: left center;
+  transition: width var(--transition-normal), max-width var(--transition-normal);
+}
+
+.topbar-brand-area.is-collapsed .topbar-logo-img {
+  width: 36px;
+  max-width: 36px;
+  height: 36px;
+  object-fit: cover;
+  object-position: 0% 50%;
+  border-radius: var(--radius-sm);
 }
 
 .mobile-nav-toggle-btn {
@@ -7097,5 +7122,756 @@ h1, h2, h3, h4, h5, h6 {
     bottom: 0;
     z-index: 20;
     box-shadow: 10px 0 25px rgba(0,0,0,0.5);
+  }
+}
+
+
+/* ==========================================================================
+   TEKLOZY FULL-VIEWPORT MOUNTAIN MAP & FLOATING DOCK PANELS (PHASE 1)
+   ========================================================================== */
+
+.home-map-only-view {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.mountain-card.full-viewport-mountain {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border-radius: 0;
+  border: none;
+  box-shadow: none;
+  overflow: hidden;
+  background: #030a17;
+}
+
+/* --- Integrated Welcome & Career Roadmap Header --- */
+.mountain-card-header.integrated-welcome-header {
+  padding: 14px 28px;
+  background: #071326;
+  border-bottom: 1px solid rgba(0, 118, 245, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  z-index: 20;
+  color: #f8fafc;
+}
+
+.header-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 3px;
+  flex-wrap: wrap;
+}
+
+.header-meta-row .kicker-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #38bdf8;
+  background: rgba(2, 132, 199, 0.16);
+  border: 1px solid rgba(2, 132, 199, 0.35);
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-bottom: 0;
+}
+
+.kicker-sparkle {
+  color: #f59e0b;
+}
+
+.career-trajectory-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #cbd5e1;
+  background: #0b1a33;
+  border: 1px solid #1e3a66;
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.dot-active {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+}
+
+.trajectory-title {
+  color: #f8fafc;
+}
+
+.btn-change-track-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10.5px;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  cursor: pointer;
+  padding: 1px 6px;
+  border-radius: 3px;
+  margin-left: 4px;
+  transition: all 0.15s ease;
+}
+
+.btn-change-track-inline:hover {
+  background: rgba(56, 189, 248, 0.25);
+  color: #ffffff;
+}
+
+.mountain-welcome-heading {
+  font-size: 17px;
+  font-weight: 700;
+  color: #f8fafc;
+  line-height: 1.3;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.mountain-welcome-heading .user-name-highlight {
+  color: #38bdf8;
+}
+
+.mountain-card-header.integrated-welcome-header .mountain-header-desc {
+  font-size: 12px;
+  color: #94a3b8;
+  margin-top: 3px;
+  line-height: 1.35;
+}
+
+.mountain-header-right-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.mountain-card-header.integrated-welcome-header .view-toggle-group {
+  background-color: #0b1a33;
+  border: 1px solid #1e3a66;
+}
+
+.mountain-card-header.integrated-welcome-header .toggle-btn {
+  color: #94a3b8;
+}
+
+.mountain-card-header.integrated-welcome-header .toggle-btn.active {
+  background-color: #0076f5;
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(0, 118, 245, 0.35);
+}
+
+/* --- Full Screen Mountain Canvas --- */
+.summit-canvas-container.full-screen-mode {
+  flex: 1;
+  height: 100%;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+  background: #030a17;
+}
+
+.summit-zoom-container {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  transform-origin: center center;
+}
+
+.summit-canvas-container.full-screen-mode .summit-artwork-wrapper {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.summit-canvas-container.full-screen-mode .summit-artwork-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center bottom;
+  display: block;
+}
+
+.summit-canvas-container.full-screen-mode .summit-artwork-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 50%, transparent 65%, rgba(3, 10, 23, 0.45) 100%),
+              linear-gradient(180deg, rgba(3, 10, 23, 0.35) 0%, transparent 20%, transparent 80%, rgba(3, 10, 23, 0.55) 100%);
+}
+
+/* --- Travel Zoom Indicator Overlay --- */
+.mountain-travel-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  pointer-events: none;
+  background: rgba(3, 10, 23, 0.4);
+  backdrop-filter: blur(2px);
+  animation: fadeInModal 0.2s ease;
+}
+
+.travel-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(7, 21, 43, 0.95);
+  border: 1px solid #0076f5;
+  color: #ffffff;
+  padding: 10px 22px;
+  border-radius: 9999px;
+  box-shadow: 0 10px 30px rgba(0, 118, 245, 0.45);
+  font-size: 13.5px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.travel-sparkle-spin {
+  animation: spinSlow 1.5s linear infinite;
+  color: #38bdf8;
+}
+
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Locked Checkpoint Shake Feedback */
+.milestone-node-wrapper.is-shaking .photo-badge {
+  animation: lockedShake 0.5s ease-in-out;
+}
+
+@keyframes lockedShake {
+  0%, 100% { transform: scale(1) translateX(0); }
+  20%, 60% { transform: scale(1.05) translateX(-5px); }
+  40%, 80% { transform: scale(1.05) translateX(5px); }
+}
+
+/* --- Floating Control Dock on Canvas --- */
+.mountain-floating-dock {
+  position: absolute;
+  top: 16px;
+  right: 24px;
+  z-index: 35;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dock-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(7, 21, 43, 0.88);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #cbd5e1;
+  padding: 7px 13px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+}
+
+.dock-pill-btn:hover {
+  background: rgba(14, 36, 71, 0.95);
+  color: #ffffff;
+  border-color: rgba(56, 189, 248, 0.4);
+  transform: translateY(-1px);
+}
+
+.dock-pill-btn.is-active {
+  background: #0076f5;
+  color: #ffffff;
+  border-color: #38bdf8;
+  box-shadow: 0 4px 18px rgba(0, 118, 245, 0.45);
+}
+
+.dock-icon {
+  color: #38bdf8;
+}
+
+.dock-pill-btn.is-active .dock-icon {
+  color: #ffffff;
+}
+
+.dock-count-badge {
+  font-size: 10px;
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  padding: 1px 6px;
+  border-radius: 10px;
+  font-weight: 700;
+}
+
+.dock-count-badge.gold {
+  background: #f59e0b;
+  color: #030a17;
+}
+
+.dock-rank-badge {
+  font-size: 10px;
+  background: rgba(56, 189, 248, 0.25);
+  color: #38bdf8;
+  padding: 1px 6px;
+  border-radius: 10px;
+  font-weight: 700;
+}
+
+.dock-pill-btn.is-active .dock-rank-badge {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+/* --- Floating Panel Stack on Canvas --- */
+.mountain-floating-panels-stack {
+  position: absolute;
+  top: 58px;
+  right: 24px;
+  width: 330px;
+  max-height: calc(100% - 76px);
+  overflow-y: auto;
+  z-index: 34;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  pointer-events: none;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(56, 189, 248, 0.3) transparent;
+}
+
+.mountain-floating-panels-stack::-webkit-scrollbar {
+  width: 5px;
+}
+
+.mountain-floating-panels-stack::-webkit-scrollbar-thumb {
+  background: rgba(56, 189, 248, 0.3);
+  border-radius: 4px;
+}
+
+.floating-card-panel {
+  pointer-events: auto;
+  background: rgba(7, 21, 43, 0.94);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  border-radius: 14px;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.5);
+  color: #f8fafc;
+  overflow: hidden;
+  animation: fadeInSlideUp 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fadeInSlideUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.panel-header-strip {
+  padding: 10px 14px;
+  background: rgba(11, 26, 51, 0.92);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.panel-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.panel-header-icon {
+  color: #38bdf8;
+}
+
+.panel-header-icon.gold {
+  color: #fbbf24;
+}
+
+.panel-tag-pill {
+  font-size: 10px;
+  font-weight: 700;
+  background: rgba(2, 132, 199, 0.2);
+  color: #38bdf8;
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+.panel-tag-pill.gold {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+}
+
+.panel-close-btn {
+  color: #94a3b8;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s ease;
+}
+
+.panel-close-btn:hover {
+  color: #ffffff;
+}
+
+.panel-body-content {
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.announcement-item {
+  padding: 9px 11px;
+  background: rgba(3, 10, 23, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+}
+
+.item-header-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 9.5px;
+  font-weight: 700;
+  color: #64748b;
+  margin-bottom: 3px;
+  letter-spacing: 0.05em;
+}
+
+.announcement-item h5 {
+  font-size: 12px;
+  font-weight: 700;
+  color: #f8fafc;
+  margin: 0 0 3px 0;
+  line-height: 1.3;
+}
+
+.announcement-item p {
+  font-size: 11.5px;
+  color: #cbd5e1;
+  line-height: 1.45;
+  margin: 0;
+}
+
+.panel-action-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: #38bdf8;
+  font-size: 11px;
+  font-weight: 600;
+  background: none;
+  border: none;
+  cursor: pointer;
+  margin-top: 6px;
+  padding: 0;
+  transition: color 0.15s ease;
+}
+
+.panel-action-link:hover {
+  color: #7dd3fc;
+}
+
+.event-item-box {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  background: rgba(3, 10, 23, 0.45);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: 8px;
+}
+
+.event-badge-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.event-timing {
+  font-size: 9.5px;
+  font-weight: 700;
+  color: #fbbf24;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.event-info h5 {
+  font-size: 12px;
+  font-weight: 700;
+  color: #f8fafc;
+  margin: 2px 0 3px 0;
+}
+
+.event-info p {
+  font-size: 11px;
+  color: #cbd5e1;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.event-meta-tags {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+  font-size: 10.5px;
+  color: #94a3b8;
+}
+
+.event-meta-tags span {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.btn-panel-primary {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #0076f5;
+  color: #ffffff;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 7px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+  transition: background 0.15s ease;
+}
+
+.btn-panel-primary:hover {
+  background: #0060cc;
+}
+
+/* Leaderboard */
+.leaderboard-scroll {
+  max-height: 240px;
+  overflow-y: auto;
+  gap: 4px;
+}
+
+.leaderboard-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 11.5px;
+}
+
+.rank-num {
+  font-weight: 700;
+  min-width: 28px;
+  color: #94a3b8;
+  font-size: 11px;
+}
+
+.rank-num.medal-1 { color: #f59e0b; }
+.rank-num.medal-2 { color: #cbd5e1; }
+.rank-num.medal-3 { color: #d97706; }
+
+.leader-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.leader-info strong {
+  color: #f8fafc;
+  font-size: 11.5px;
+}
+
+.leader-info small {
+  color: #64748b;
+  font-size: 10px;
+}
+
+.leader-xp {
+  font-weight: 700;
+  color: #94a3b8;
+  font-size: 11px;
+}
+
+.leaderboard-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  margin: 3px 0;
+}
+
+.leaderboard-item.current-user-rank {
+  background: rgba(0, 118, 245, 0.2);
+  border: 1px solid rgba(0, 118, 245, 0.4);
+}
+
+.leaderboard-item.current-user-rank .leader-xp.highlight {
+  color: #38bdf8;
+}
+
+/* Tabular List Full Mode */
+.milestones-list-container.full-list-mode {
+  flex: 1;
+  height: 100%;
+  overflow-y: auto;
+  padding: 24px 32px;
+  background: #071326;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* --- Track Switch Confirmation Modal --- */
+.modal-backdrop-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 10, 23, 0.82);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  animation: fadeInModal 0.15s ease;
+}
+
+.modal-card-box {
+  background: #071326;
+  border: 1px solid rgba(0, 118, 245, 0.35);
+  border-radius: 14px;
+  width: 440px;
+  max-width: 90vw;
+  padding: 24px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.65);
+  color: #f8fafc;
+}
+
+.modal-header-icon-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.modal-warning-icon {
+  color: #f59e0b;
+}
+
+.modal-header-icon-row h3 {
+  font-size: 16.5px;
+  font-weight: 700;
+  color: #f8fafc;
+  margin: 0;
+}
+
+.modal-card-box p {
+  font-size: 13px;
+  line-height: 1.5;
+  color: #cbd5e1;
+  margin-bottom: 10px;
+}
+
+.modal-card-box p strong {
+  color: #38bdf8;
+}
+
+.modal-actions-dual {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn-modal-secondary {
+  flex: 1;
+  padding: 9px;
+  border-radius: 6px;
+  background: #1e293b;
+  color: #cbd5e1;
+  font-weight: 600;
+  font-size: 12.5px;
+  cursor: pointer;
+  border: 1px solid #334155;
+  transition: background 0.15s ease;
+}
+
+.btn-modal-secondary:hover {
+  background: #283548;
+  color: #ffffff;
+}
+
+.btn-modal-danger {
+  flex: 1;
+  padding: 9px;
+  border-radius: 6px;
+  background: #0076f5;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 12.5px;
+  cursor: pointer;
+  border: none;
+  transition: background 0.15s ease;
+}
+
+.btn-modal-danger:hover {
+  background: #0060cc;
+}
+
+/* Tablet & Mobile Responsiveness */
+@media (max-width: 960px) {
+  .mountain-card-header.integrated-welcome-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px 16px;
+  }
+  .mountain-header-right-controls {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .mountain-floating-dock {
+    top: 10px;
+    right: 12px;
+    flex-wrap: wrap;
+  }
+  .mountain-floating-panels-stack {
+    top: 50px;
+    right: 12px;
+    left: 12px;
+    width: auto;
   }
 }
