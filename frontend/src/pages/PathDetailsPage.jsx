@@ -134,21 +134,38 @@ export default function PathDetailsPage() {
             })}
           </div>
 
-          {/* Continue Learning Strip */}
-          <div className="curriculum-continue-strip">
-            <div className="strip-art-icon">
-              {isAI ? <Sparkles size={24} /> : <Code2 size={24} />}
+          {/* Continue Learning / Milestone Completed Strip */}
+          {completedCount >= modulesList.length ? (
+            <div className="curriculum-continue-strip milestone-unlocked-strip">
+              <div className="strip-art-icon celebration-icon">
+                <Trophy size={26} />
+              </div>
+              <div className="strip-info">
+                <span className="strip-eyebrow celebration-text">LEVEL 1 COMPLETE · MILESTONE ACHIEVED</span>
+                <h4>Level 2: Learn Basics is now UNLOCKED!</h4>
+                <p>All foundational curriculum modules finished. Advance along the mountain ridge to Level 2.</p>
+              </div>
+              <button className="btn-strip-cta celebration-btn" onClick={() => navigate('level/2')}>
+                <span>Ascend to Level 2</span>
+                <ArrowRight size={14} />
+              </button>
             </div>
-            <div className="strip-info">
-              <span className="strip-eyebrow">READY WHEN YOU ARE</span>
-              <h4>{modulesList[0]?.title}</h4>
-              <p>Video lessons • Concept reading • Live knowledge check quiz</p>
+          ) : (
+            <div className="curriculum-continue-strip">
+              <div className="strip-art-icon">
+                {isAI ? <Sparkles size={24} /> : <Code2 size={24} />}
+              </div>
+              <div className="strip-info">
+                <span className="strip-eyebrow">READY WHEN YOU ARE</span>
+                <h4>{modulesList[completedCount]?.title || modulesList[0]?.title}</h4>
+                <p>Video lessons • Concept reading • Live knowledge check quiz</p>
+              </div>
+              <button className="btn-strip-cta" onClick={() => handleOpenLesson(completedCount < modulesList.length ? completedCount : 0)}>
+                <span>Launch Studio</span>
+                <ArrowRight size={14} />
+              </button>
             </div>
-            <button className="btn-strip-cta" onClick={() => handleOpenLesson(0)}>
-              <span>Launch Studio</span>
-              <ArrowRight size={14} />
-            </button>
-          </div>
+          )}
         </div>
 
         {/* Right Sidebar: Outcomes & Track Switching */}

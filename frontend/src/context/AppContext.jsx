@@ -12,8 +12,8 @@ export const DEFAULT_PATHS = [
     desc: 'Master how modern web software is designed, engineered, tested and deployed at scale.',
     icon: Code2,
     badge: 'SOFTWARE ENGINEERING',
-    modulesCount: 8,
-    estimatedTime: '2.0 hrs',
+    modulesCount: 5,
+    estimatedTime: '25 min',
     totalXp: 500,
     tags: ['React & TypeScript', 'Node.js & Python', 'Databases & SQL', 'CI/CD & Cloud'],
     skills: ['Frontend Architecture', 'REST & GraphQL APIs', 'Database Schemas', 'Cloud Deployment'],
@@ -115,6 +115,34 @@ export function AppProvider({ children }) {
     return DEFAULT_PATHS.find(p => p.id === savedId) || DEFAULT_PATHS[1]; // default to AI
   });
 
+  // Track Level Unlock Progression
+  const totalLevel1Modules = selectedPath?.modules?.length || 5;
+  const isLevel1Complete = completedLessons.length >= totalLevel1Modules;
+
+  const [unlockedLevel, setUnlockedLevel] = useState(() => {
+    const saved = Number(localStorage.getItem('teklozyUnlockedLevel'));
+    if (saved && saved >= 1) return saved;
+    const guestProgress = JSON.parse(localStorage.getItem('teklozyGuestProgress') || '{}');
+    const completed = Array.isArray(guestProgress.completed) ? guestProgress.completed : [0, 1];
+    return completed.length >= 5 ? 2 : 1;
+  });
+
+  const unlockLevel = useCallback((lvl) => {
+    setUnlockedLevel(prev => {
+      const next = Math.max(prev, lvl);
+      localStorage.setItem('teklozyUnlockedLevel', String(next));
+      return next;
+    });
+  }, []);
+
+  // Automatically ensure Level 2 unlocks whenever all Level 1 modules are finished
+  useEffect(() => {
+    if (isLevel1Complete && unlockedLevel < 2) {
+      setUnlockedLevel(2);
+      localStorage.setItem('teklozyUnlockedLevel', '2');
+    }
+  }, [isLevel1Complete, unlockedLevel]);
+
   const setSelectedPath = useCallback(async (pathObj) => {
     setSelectedPathState(pathObj);
     localStorage.setItem('teklozySelectedPath', pathObj.id);
@@ -195,9 +223,28 @@ export function AppProvider({ children }) {
 
   // Complete lesson handler
   const markLessonComplete = useCallback(async (moduleIndex) => {
+    let nowCompleted = [];
     setCompletedLessons(prev => {
-      if (prev.includes(moduleIndex)) return prev;
+      if (prev.includes(moduleIndex)) {
+        nowCompleted = prev;
+        return prev;
+      }
       const updated = [...prev, moduleIndex];
+      nowCompleted = updated;
+
+      // Automatically unlock Level 2 if all level 1 modules are completed
+      const total = selectedPath?.modules?.length || 5;
+      if (updated.length >= total) {
+        setUnlockedLevel(lvl => {
+          const nextLvl = Math.max(lvl, 2);
+          localStorage.setItem('teklozyUnlockedLevel', String(nextLvl));
+          return nextLvl;
+        });
+        triggerToast('🎉 Milestone Achieved! All Level 1 modules finished. Level 2: Learn Basics is UNLOCKED!');
+      } else {
+        triggerToast('Lesson completed! +125 XP added to your career journey.');
+      }
+
       // Sync guest progress
       if (localStorage.getItem('teklozyGuestSession') === 'true') {
         const saved = JSON.parse(localStorage.getItem('teklozyGuestProgress') || '{}');
@@ -209,7 +256,6 @@ export function AppProvider({ children }) {
     });
 
     setXp(x => x + 125);
-    triggerToast('Lesson completed! +125 XP added to your career journey.');
 
     try {
       const { supabase } = await import('../lib/supabase.js');
@@ -278,6 +324,16 @@ export function AppProvider({ children }) {
     navigate('signin');
   }, [navigate, triggerToast]);
 
+  const dynamicMilestones = LEVEL_MILESTONES.map((m) => {
+    if (m.level < unlockedLevel) {
+      return { ...m, status: 'completed' };
+    } else if (m.level === unlockedLevel) {
+      return { ...m, status: 'current' };
+    } else {
+      return { ...m, status: 'locked' };
+    }
+  });
+
   const value = {
     currentRoute,
     navigate,
@@ -290,6 +346,9 @@ export function AppProvider({ children }) {
     selectedPath,
     setSelectedPath,
     markLessonComplete,
+    unlockedLevel,
+    unlockLevel,
+    isLevel1Complete,
     sidebarCollapsed,
     setSidebarCollapsed,
     mobileMenuOpen,
@@ -300,7 +359,7 @@ export function AppProvider({ children }) {
     loginAsGuest,
     logout,
     paths: DEFAULT_PATHS,
-    milestones: LEVEL_MILESTONES
+    milestones: dynamicMilestones
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

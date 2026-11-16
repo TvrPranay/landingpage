@@ -79,8 +79,8 @@ export default function LessonPage() {
     if (moduleIndex < modulesList.length - 1) {
       navigate('lesson', { module: moduleIndex + 1 });
     } else {
-      triggerToast('Module 01 Complete! +125 XP added.');
-      navigate(`path/${currentPath.id}`);
+      triggerToast('🎉 Level 1 Complete! All foundational modules finished. Ascending to Level 2: Learn Basics!');
+      navigate('level/2');
     }
   };
 
@@ -644,7 +644,7 @@ export default function LessonPage() {
             </button>
           ) : (
             <button className="btn-nav-next finish-btn" onClick={handleNextLesson}>
-              <span>Complete Module 01</span>
+              <span>Complete Level 1 & Unlock Level 2</span>
               <Check size={16} strokeWidth={3} />
             </button>
           )}

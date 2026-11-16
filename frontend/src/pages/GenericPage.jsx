@@ -6,11 +6,15 @@ import {
 } from 'lucide-react';
 
 export default function GenericPage({ type }) {
-  const { currentRoute, navigate, milestones, xp, displayName, email } = useApp();
+  const { currentRoute, navigate, milestones, xp, displayName, email, unlockedLevel, selectedPath, isLevel1Complete } = useApp();
 
   if (type === 'level') {
     const lvlNum = parseInt(currentRoute.path.replace('level/', ''), 10) || 1;
     const milestone = milestones.find(m => m.level === lvlNum) || milestones[0];
+    const effectiveUnlocked = unlockedLevel || (isLevel1Complete ? 2 : 1);
+    const isUnlocked = lvlNum <= effectiveUnlocked;
+    const isDone = lvlNum < effectiveUnlocked;
+    const isCurrent = lvlNum === effectiveUnlocked;
 
     return (
       <div className="generic-workspace-page">
@@ -23,14 +27,16 @@ export default function GenericPage({ type }) {
           <span className="breadcrumb-current">Level {lvlNum}: {milestone.name}</span>
         </div>
 
-        <section className="level-overview-hero">
+        <section className={`level-overview-hero ${isUnlocked ? 'hero-unlocked' : 'hero-locked'}`}>
           <div className="level-badge-large">
             <span>LVL</span>
             <strong>{lvlNum}</strong>
           </div>
           <div className="level-hero-text">
-            <span className="hero-eyebrow-chip">MILESTONE {lvlNum} OF 10</span>
-            <h1>{milestone.name}</h1>
+            <span className="hero-eyebrow-chip">
+              {isDone ? 'COMPLETED MILESTONE' : isCurrent ? 'CURRENT ACTIVE LEVEL' : 'LOCKED CHECKPOINT'}
+            </span>
+            <h1>Level {lvlNum} · {milestone.name}</h1>
             <p>{milestone.desc}</p>
             <div className="level-rewards-strip">
               <span><Zap size={14} /> +250 XP Reward</span>
@@ -41,20 +47,67 @@ export default function GenericPage({ type }) {
         </section>
 
         <div className="level-actions-container">
-          {lvlNum === 1 ? (
-            <div className="level-active-prompt-box">
-              <h3>Level 1 Focus: Define Your Specialization</h3>
-              <p>Explore software engineering versus artificial intelligence systems and enroll in your primary track.</p>
-              <button className="btn-level-primary" onClick={() => navigate('discover')}>
-                <span>Choose Career Path</span>
-                <ArrowRight size={15} />
-              </button>
-            </div>
+          {isUnlocked ? (
+            lvlNum === 1 ? (
+              <div className="level-active-prompt-box">
+                <h3>Level 1 Focus: Define Your Specialization</h3>
+                <p>Explore software engineering versus artificial intelligence systems and complete your foundational modules.</p>
+                <div className="level-btn-row">
+                  <button className="btn-level-primary" onClick={() => navigate(selectedPath ? `path/${selectedPath.id}` : 'discover')}>
+                    <span>{selectedPath ? 'Continue Curriculum' : 'Choose Career Path'}</span>
+                    <ArrowRight size={15} />
+                  </button>
+                  <button className="btn-level-secondary" onClick={() => navigate('home')}>
+                    <span>Return to Summit Map</span>
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="level-unlocked-celebration-box">
+                <div className="celebration-top-badge">
+                  <Sparkles size={15} className="sparkle-gold" />
+                  <span>{isDone ? 'MILESTONE COMPLETED' : 'MILESTONE UNLOCKED · ACTIVE CHECKPOINT'}</span>
+                </div>
+                <h3>Level {lvlNum}: {milestone.name} · Core Programming & Algorithms</h3>
+                <p>
+                  You have successfully ascended from Level 1! You are now eligible to build core programming proficiency, algorithm design patterns, and practical systems competencies.
+                </p>
+
+                <div className="level-tracks-preview-grid">
+                  <div className="level-feature-card">
+                    <div className="feature-icon-circle"><Code2 size={24} /></div>
+                    <h4>Teklozy CodeLab IDE</h4>
+                    <p>Practice algorithmic reasoning in Python with our live browser sandbox, terminal, and Socratic AI Mentor.</p>
+                    <button className="btn-card-action" onClick={() => navigate('build')}>
+                      <span>Launch CodeLab</span>
+                      <ArrowRight size={14} />
+                    </button>
+                  </div>
+
+                  <div className="level-feature-card">
+                    <div className="feature-icon-circle"><Trophy size={24} /></div>
+                    <h4>Algorithm Challenges</h4>
+                    <p>Solve data structures problem sets, optimize Big-O runtime, and earn verified XP bounties.</p>
+                    <button className="btn-card-action" onClick={() => navigate('challenges')}>
+                      <span>Explore Challenges</span>
+                      <ArrowRight size={14} />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="level-footer-nav">
+                  <button className="btn-level-secondary" onClick={() => navigate('home')}>
+                    <ChevronLeft size={16} />
+                    <span>Return to Summit Map</span>
+                  </button>
+                </div>
+              </div>
+            )
           ) : (
             <div className="level-locked-prompt-box">
               <div className="locked-icon-bubble"><Lock size={28} /></div>
-              <h3>Level {lvlNum} Unlocks at Milestone Completion</h3>
-              <p>Complete all foundational modules in Level 1 to automatically unlock this milestone.</p>
+              <h3>Level {lvlNum} is Locked</h3>
+              <p>Complete all foundational modules in Level {lvlNum - 1} to automatically ascend and unlock this milestone.</p>
               <button className="btn-level-primary" onClick={() => navigate('home')}>
                 <span>Return to Summit Map</span>
                 <ArrowRight size={15} />

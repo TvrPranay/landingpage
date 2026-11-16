@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 
 export default function MountainMap() {
-  const { milestones, selectedPath, navigate, displayName, xp, triggerToast } = useApp();
+  const { milestones, selectedPath, navigate, displayName, xp, triggerToast, unlockedLevel, isLevel1Complete, completedLessons } = useApp();
   const [viewMode, setViewMode] = useState('map'); // 'map' | 'list'
   const [activeTooltip, setActiveTooltip] = useState(null);
 
@@ -71,15 +71,17 @@ export default function MountainMap() {
     { left: 87.8, top: 22.5 }    // Level 10: Alumni Connect (Summit gateway platform)
   ];
 
+  const effectiveUnlocked = unlockedLevel || (isLevel1Complete ? 2 : 1);
+
   const isCompleted = (index) => {
-    if (index === 0) return Boolean(selectedPath);
-    return false;
+    const lvl = index + 1;
+    if (lvl === 1) return effectiveUnlocked >= 2;
+    return lvl < effectiveUnlocked;
   };
 
   const isCurrent = (index) => {
-    if (index === 0) return !selectedPath;
-    if (index === 1) return Boolean(selectedPath);
-    return false;
+    const lvl = index + 1;
+    return lvl === effectiveUnlocked;
   };
 
   // Interactive milestone click with smooth travel/zoom transition
@@ -92,7 +94,7 @@ export default function MountainMap() {
     if (locked) {
       setLockedShakeIndex(index);
       setTimeout(() => setLockedShakeIndex(null), 600);
-      triggerToast(`🔒 Level ${index + 1}: ${milestones[index]?.name || ''} is locked. Complete Level ${index} milestones to ascend!`);
+      triggerToast(`🔒 Level ${index + 1}: ${milestones[index]?.name || ''} is locked. Complete all Level ${index} modules to unlock!`);
       return;
     }
 
@@ -120,7 +122,7 @@ export default function MountainMap() {
     }, 550);
   };
 
-  const completedCount = selectedPath ? 1 : 0;
+  const completedCount = Math.max(0, effectiveUnlocked - 1);
   const progressPercent = Math.round((completedCount / 10) * 100);
 
   return (
