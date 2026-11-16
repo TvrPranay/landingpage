@@ -43,7 +43,7 @@ export default function Topbar() {
     const { path, query } = currentRoute;
 
     if (path === 'home') {
-      return [{ label: 'Dashboard', route: 'home' }, { label: 'Career Journey', active: true }];
+      return [];
     }
     if (path === 'discover') {
       return [

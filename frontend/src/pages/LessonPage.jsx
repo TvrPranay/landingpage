@@ -31,7 +31,7 @@ export default function LessonPage() {
   }, [moduleIndex, currentModule.type]);
 
   // Active sub-tab below video
-  const [activeTab, setActiveTab] = useState('About'); // 'About' | 'Takeaways' | 'Resources' | 'Notes' | 'Quiz'
+  const [activeTab, setActiveTab] = useState(currentRoute.query.tab || 'About'); // 'About' | 'Takeaways' | 'Resources' | 'Notes' | 'Quiz'
 
   // Visual example selection
   const [visualExample, setVisualExample] = useState('recommendation'); // 'recommendation' | 'spam' | 'routes'
@@ -208,35 +208,6 @@ export default function LessonPage() {
           COLUMN 2: CENTER LESSON STAGE
           ========================================================================= */}
       <main className="lesson-stage-center">
-        {/* Lesson Top Badge Header */}
-        <div className="lesson-header-pill-strip">
-          <span className="lesson-number-pill">Lesson {moduleIndex + 1} of {modulesList.length}</span>
-
-          <div className="format-mode-toggle-group">
-            <button
-              className={`format-pill-btn ${learningMode === 'reading' ? 'is-selected' : ''}`}
-              onClick={() => setLearningMode('reading')}
-            >
-              <BookOpen size={13} />
-              <span>Reading</span>
-            </button>
-            <button
-              className={`format-pill-btn ${learningMode === 'visual' ? 'is-selected' : ''}`}
-              onClick={() => setLearningMode('visual')}
-            >
-              <Layers size={13} />
-              <span>Visual Learning</span>
-            </button>
-            <button
-              className={`format-pill-btn ${learningMode === 'video' ? 'is-selected' : ''}`}
-              onClick={() => setLearningMode('video')}
-            >
-              <Play size={13} fill="currentColor" />
-              <span>Video</span>
-            </button>
-          </div>
-        </div>
-
         {/* Lesson Heading Title */}
         <div className="lesson-title-area">
           <h1 className="lesson-primary-heading">{currentModule.title}</h1>
@@ -501,6 +472,14 @@ export default function LessonPage() {
                 <NotebookPen size={14} />
                 <span>Notes</span>
               </button>
+              <button
+                className={`tab-nav-btn ${activeTab === 'Quiz' ? 'is-active' : ''}`}
+                onClick={() => setActiveTab('Quiz')}
+                role="tab"
+              >
+                <HelpCircle size={14} />
+                <span>Quick Check</span>
+              </button>
             </div>
 
             {/* Active Tab Panel Content */}
@@ -580,6 +559,67 @@ export default function LessonPage() {
                   </div>
                 </div>
               )}
+
+              {activeTab === 'Quiz' && (
+                <div className="quiz-tab-display">
+                  <div className="quiz-tab-card">
+                    <div className="quiz-tab-card-header">
+                      <div className="quiz-header-badge">
+                        <Zap size={14} className="quick-bolt-icon" />
+                        <span>Concept Checkpoint · +25 XP</span>
+                      </div>
+                    </div>
+                    <h3 className="quiz-tab-q-title">Which problem is a good use for AI?</h3>
+                    <p className="quiz-tab-q-sub">Select the scenario that best leverages machine intelligence and high-dimensional pattern recognition:</p>
+
+                    <div className="quiz-tab-options-stack">
+                      {[
+                        { id: 'opt-a', text: 'Recommending content and shows by analyzing subtle behavioral patterns across millions of users', correct: true },
+                        { id: 'opt-b', text: 'Typing an individual personal letter manually on a mechanical typewriter', correct: false },
+                        { id: 'opt-c', text: 'Calculating simple static arithmetic (like 2 + 2) by hand with pencil and paper', correct: false }
+                      ].map((opt) => {
+                        const isChosen = quizAnswers[moduleIndex] === opt.id;
+                        return (
+                          <button
+                            key={opt.id}
+                            className={`quiz-tab-option-btn ${isChosen ? (opt.correct ? 'is-correct' : 'is-wrong') : ''}`}
+                            onClick={() => {
+                              setQuizAnswers(prev => {
+                                const next = { ...prev, [moduleIndex]: opt.id };
+                                localStorage.setItem(`teklozy-quiz-${moduleIndex}`, JSON.stringify({ answers: next }));
+                                return next;
+                              });
+                              setQuizSubmitted(true);
+                              if (opt.correct) {
+                                triggerToast('🎉 Correct! AI excels at large-scale pattern detection (+25 XP).');
+                              }
+                            }}
+                          >
+                            <span className="quiz-opt-radio">
+                              {isChosen ? (opt.correct ? <Check size={12} strokeWidth={3} /> : '✕') : ''}
+                            </span>
+                            <span className="quiz-opt-text">{opt.text}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    {quizAnswers[moduleIndex] && (
+                      <div className={`quiz-tab-explanation ${quizAnswers[moduleIndex] === 'opt-a' ? 'is-success' : 'is-error'}`}>
+                        {quizAnswers[moduleIndex] === 'opt-a' ? (
+                          <p>
+                            <strong>✓ Spot on!</strong> AI thrives at identifying subtle preferences, habits, and latent relationships across massive multi-dimensional datasets that humans could never process manually.
+                          </p>
+                        ) : (
+                          <p>
+                            <strong>✗ Not quite.</strong> That scenario represents simple mechanical repetition or straightforward arithmetic. AI is specifically designed for complex, high-scale pattern recognition and adaptive decision making.
+                          </p>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -612,67 +652,10 @@ export default function LessonPage() {
       </main>
 
       {/* =========================================================================
-          COLUMN 3: RIGHT INSIGHTS SIDEBAR
+          COLUMN 3: RIGHT INSIGHTS SIDEBAR (Streamlined - No Duplicate Content)
           ========================================================================= */}
       <aside className="lesson-sidebar-insights" aria-label="Lesson insights and progress">
-        {/* Card 1: Module Progress */}
-        <section className="insight-card progress-card">
-          <div className="card-top-header">
-            <h3>Module Progress</h3>
-            <span className="card-header-sub">{completedLessons.length} of {modulesList.length} lessons</span>
-          </div>
-          <div className="progress-bar-rail">
-            <div className="progress-bar-track" style={{ width: `${progressPercent}%` }} />
-          </div>
-          <div className="progress-bar-footer-stat">
-            <span>{progressPercent}% Complete</span>
-          </div>
-        </section>
-
-        {/* Card 2: Key Takeaways */}
-        <section className="insight-card takeaways-card">
-          <div className="takeaways-header-row">
-            <Target size={16} className="target-blue-icon" />
-            <h3>Key Takeaways</h3>
-          </div>
-          <ul className="takeaways-bullet-stack">
-            <li>
-              <CheckCircle2 size={16} className="bullet-blue-check" />
-              <span>AI was created to solve real problems.</span>
-            </li>
-            <li>
-              <CheckCircle2 size={16} className="bullet-blue-check" />
-              <span>It helps with large, repetitive tasks.</span>
-            </li>
-            <li>
-              <CheckCircle2 size={16} className="bullet-blue-check" />
-              <span>It uses data to find patterns and support better decisions.</span>
-            </li>
-          </ul>
-        </section>
-
-        {/* Card 3: Try a Quick Check (Interactive Quiz Trigger) */}
-        <section className="insight-card quick-check-card">
-          <div className="quick-check-left">
-            <Zap size={16} className="quick-bolt-icon" />
-            <div className="quick-copy">
-              <strong>Try a Quick Check</strong>
-              <span>Which problem is a good use for AI?</span>
-            </div>
-          </div>
-          <button
-            className="quick-check-arrow-btn"
-            onClick={() => {
-              setLearningMode('video');
-              setActiveTab('Notes');
-            }}
-            aria-label="Open quick check"
-          >
-            <ArrowRight size={15} />
-          </button>
-        </section>
-
-        {/* Card 4: Real-World Examples */}
+        {/* Real-World Examples */}
         <section className="insight-card examples-card">
           <div className="examples-header-row">
             <Layers size={16} className="box-blue-icon" />
@@ -700,7 +683,7 @@ export default function LessonPage() {
           </div>
         </section>
 
-        {/* Card 5: Up Next in this Module (For Video View) */}
+        {/* Up Next in this Module (For Video View) */}
         {learningMode === 'video' && (
           <section className="insight-card up-next-card">
             <div className="card-top-header">

@@ -51,18 +51,24 @@ export default function MountainMap() {
     });
   };
 
-  // Exact coordinates (% left, % top) mapped with sub-pixel precision to the 3D mountain landscape artwork
+  const closeAllPanels = () => {
+    const allClosed = { announcements: false, events: false, leaderboard: false };
+    setPanels(allClosed);
+    localStorage.setItem('teklozy_home_panels', JSON.stringify(allClosed));
+  };
+
+  // Exact coordinates (% left, % top) calibrated to align directly on glowing 3D artwork platforms
   const nodePositions = [
-    { left: 12.8, top: 80.6 },   // Level 1: Discover (Basecamp tent with green completed disc)
-    { left: 21.5, top: 70.8 },   // Level 2: Learn Basics (Current waypoint with pin platform)
-    { left: 36.1, top: 60.8 },   // Level 3: Learn Advanced (Academy / villa platform)
-    { left: 50.2, top: 54.8 },   // Level 4: Start Building (Waterfall canyon bridge platform)
-    { left: 51.3, top: 42.2 },   // Level 5: Networking (Observatory cliff platform)
-    { left: 63.1, top: 38.5 },   // Level 6: Showcase (High ridge mountain pass)
-    { left: 73.1, top: 33.7 },   // Level 7: Interview Prep (Alpine stone chalet waypoint)
-    { left: 78.6, top: 47.4 },   // Level 8: Apply & Match (Lower switchback cliff terrace)
-    { left: 80.4, top: 27.6 },   // Level 9: Premium Access (Upper glacial ice bridge)
-    { left: 87.6, top: 22.9 }    // Level 10: Alumni Connect (Summit gateway platform)
+    { left: 10.8, top: 77.2 },   // Level 1: Discover (Basecamp tent with green completed disc)
+    { left: 21.6, top: 69.5 },   // Level 2: Learn Basics (Current waypoint on trailhead platform)
+    { left: 39.8, top: 62.2 },   // Level 3: Learn Advanced (Villa terrace glowing cyan disc)
+    { left: 51.5, top: 55.5 },   // Level 4: Start Building (Waterfall canyon bridge platform)
+    { left: 52.6, top: 43.0 },   // Level 5: Networking (Observatory ridge glowing circle)
+    { left: 60.8, top: 38.5 },   // Level 6: Showcase (High ridge mountain pass)
+    { left: 74.0, top: 33.8 },   // Level 7: Interview Prep (Alpine stone chalet waypoint)
+    { left: 78.8, top: 46.8 },   // Level 8: Apply & Match (Lower switchback cliff terrace)
+    { left: 81.2, top: 27.2 },   // Level 9: Premium Access (Upper glacial ice bridge)
+    { left: 87.8, top: 22.5 }    // Level 10: Alumni Connect (Summit gateway platform)
   ];
 
   const isCompleted = (index) => {
@@ -124,28 +130,6 @@ export default function MountainMap() {
           ===================================================================== */}
       <div className="mountain-card-header integrated-welcome-header">
         <div className="mountain-header-left">
-          <div className="header-meta-row">
-            <span className="kicker-pill">
-              <Sparkles size={11} className="kicker-sparkle" />
-              <span>LEVEL 1 · TECH APPRENTICE</span>
-            </span>
-
-            {selectedPath && (
-              <div className="career-trajectory-pill" title="Current Career Specialization">
-                <span className="dot-active" />
-                <span className="trajectory-title">{selectedPath.title}</span>
-                <button
-                  className="btn-change-track-inline"
-                  onClick={() => setSwitchModalOpen(true)}
-                  title="Change Career Track"
-                >
-                  <RefreshCw size={11} />
-                  <span>Change Track</span>
-                </button>
-              </div>
-            )}
-          </div>
-
           <h1 className="mountain-welcome-heading">
             Welcome back, <span className="user-name-highlight">{displayName}</span> — The 10-Level Mountain Ascent
           </h1>
@@ -186,14 +170,28 @@ export default function MountainMap() {
           2. MAIN FULL-SCREEN MOUNTAIN CANVAS (Requirement 5 & 7)
           ===================================================================== */}
       {viewMode === 'map' ? (
-        <div className="summit-canvas-container photorealistic-mode full-screen-mode" role="region" aria-label="Interactive 3D mountain journey map">
+        <div
+          className="summit-canvas-container photorealistic-mode full-screen-mode"
+          role="region"
+          aria-label="Interactive 3D mountain journey map"
+          onClick={(e) => {
+            if (
+              !e.target.closest('.mountain-floating-dock') &&
+              !e.target.closest('.mountain-floating-panels-stack') &&
+              !e.target.closest('.milestone-node-wrapper') &&
+              !e.target.closest('.summit-shrine-marker')
+            ) {
+              closeAllPanels();
+            }
+          }}
+        >
           
           {/* Zoom & Travel Transform Wrapper */}
           <div
             className={`summit-zoom-container ${isTraveling ? 'is-traveling' : ''}`}
             style={{
-              transform: isTraveling ? `scale(1.38) translate(${travelOffset.x}%, ${travelOffset.y}%)` : 'scale(1) translate(0, 0)',
-              transition: 'transform 0.55s cubic-bezier(0.16, 1, 0.3, 1)'
+              transform: isTraveling ? `scale(1.48) translate(${travelOffset.x}%, ${travelOffset.y}%)` : 'scale(1) translate(0, 0)',
+              transition: 'transform 0.65s cubic-bezier(0.16, 1, 0.3, 1)'
             }}
           >
             {/* 3D Mountain Artwork Canvas */}
@@ -231,8 +229,12 @@ export default function MountainMap() {
               return (
                 <div
                   key={m.level}
-                  className={`milestone-node-wrapper photo-node ${done ? 'is-done' : ''} ${current ? 'is-current' : ''} ${locked ? 'is-locked' : ''} ${isShaking ? 'is-shaking' : ''}`}
-                  style={{ left: `${pos.left}%`, top: `${pos.top}%` }}
+                  className={`milestone-node-wrapper photo-node ${done ? 'is-done' : ''} ${current ? 'is-current' : ''} ${locked ? 'is-locked' : ''} ${isShaking ? 'is-shaking' : ''} ${activeTooltip === idx ? 'has-active-tooltip' : ''}`}
+                  style={{
+                    left: `${pos.left}%`,
+                    top: `${pos.top}%`,
+                    zIndex: activeTooltip === idx ? 99 : 6
+                  }}
                   onMouseEnter={() => setActiveTooltip(idx)}
                   onMouseLeave={() => setActiveTooltip(null)}
                 >
