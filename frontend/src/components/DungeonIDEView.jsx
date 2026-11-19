@@ -29,9 +29,21 @@ export default function DungeonIDEView({
   const currentChapter = DUNGEON_CHAPTERS.find(ch => ch.id === Number(chapterId)) || DUNGEON_CHAPTERS[0];
   const problem = currentChapter.problems.find(p => p.id === Number(problemId)) || currentChapter.problems[0];
 
-  // Active Tab in Left Column: 'problem' | 'hints' | 'discussion'
+  // Active Tab in Left Column: 'problem' | 'ai-mentor' | 'hints' | 'discussion'
   const [activeLeftTab, setActiveLeftTab] = useState('problem');
   const [isBookmarked, setIsBookmarked] = useState(false);
+
+  // AI Mentor State (CodeLab-grade Socratic guidance)
+  const [mentorMessages, setMentorMessages] = useState([
+    {
+      role: 'assistant',
+      text: `👋 Greetings Adventurer! I'm your Socratic AI Mentor for **${problem.title}**.\n\nI can help you build algorithmic intuition, explore edge cases, or diagnose bugs without simply handing you the full code.\n\nWhat would you like to explore?`
+    }
+  ]);
+  const [mentorInput, setMentorInput] = useState('');
+  const [isMentorThinking, setIsMentorThinking] = useState(false);
+  const [hintIndex, setHintIndex] = useState(0);
+  const chatScrollRef = useRef(null);
 
   // Editor State
   const [language, setLanguage] = useState('javascript'); // 'javascript' | 'python'
@@ -66,7 +78,53 @@ export default function DungeonIDEView({
     } else {
       setPassedCount(0);
     }
+    setHintIndex(0);
+    setMentorMessages([
+      {
+        role: 'assistant',
+        text: `👋 Greetings Adventurer! I'm your Socratic AI Mentor for **${problem.title}**.\n\nI can help you build algorithmic intuition, explore edge cases, or diagnose bugs without simply handing you the full code.\n\nWhat would you like to explore?`
+      }
+    ]);
   }, [problem.id, language, isSolvedInitially]);
+
+  useEffect(() => {
+    if (chatScrollRef.current) {
+      chatScrollRef.current.scrollTop = chatScrollRef.current.scrollHeight;
+    }
+  }, [mentorMessages, isMentorThinking]);
+
+  const handleAskMentor = (promptText) => {
+    const q = (promptText || mentorInput).trim();
+    if (!q) return;
+
+    const userMsg = { role: 'user', text: q };
+    setMentorMessages(prev => [...prev, userMsg]);
+    setMentorInput('');
+    setIsMentorThinking(true);
+
+    setTimeout(() => {
+      let reply = '';
+      const qLower = q.toLowerCase();
+
+      if (qLower.includes('hint') || qLower.includes('stuck') || qLower.includes('clue')) {
+        const hList = problem.hints || [];
+        const currentH = hList[hintIndex % hList.length] || 'Think about the core data structure that provides O(1) lookups.';
+        setHintIndex(prev => prev + 1);
+        reply = `💡 **Guiding Clue (Hint ${((hintIndex) % hList.length) + 1} of ${hList.length}):**\n\n${currentH}\n\n*Question for you:* How does this clue change your data structure or pointer strategy?`;
+      } else if (qLower.includes('complexity') || qLower.includes('time') || qLower.includes('space') || qLower.includes('big-o') || qLower.includes('big o')) {
+        reply = `⏱️ **Complexity Analysis:**\n\n${problem.discussion || 'For this problem, aim for an optimal O(N) single-pass runtime using hash lookups or two-pointers.'}\n\n*Target:* Can you avoid nested loops to keep it linear?`;
+      } else if (qLower.includes('edge case') || qLower.includes('test') || qLower.includes('empty')) {
+        reply = `🔍 **Key Edge Cases to Consider:**\n\n1. Minimal inputs (empty or single element arrays/nodes)\n2. Duplicate values or duplicate frequencies\n3. Negative integers or zeroes\n4. Target formed by the same element vs distinct indices\n\nDoes your current code account for all of these?`;
+      } else if (qLower.includes('approach') || qLower.includes('how to start') || qLower.includes('step')) {
+        reply = `🧠 **Thought Process & Mental Model:**\n\n1. **First identify the bottleneck:** A naive brute-force checks all pairs/combinations.\n2. **Look for invariant patterns:** What value or state do you need at each step?\n3. **Trade space for time:** Can a Hash Map, sliding window, or pointer technique reduce your search from O(N) to O(1)?\n\nTry writing down the state you need to remember as you iterate!`;
+      } else {
+        reply = `🤖 **Socratic Guidance:**\n\nGreat question regarding **${problem.title}**!\n\nWhen tackling this, ask yourself:\n- What is the most expensive operation in your current draft?\n- Can you remember past elements so you never have to re-scan backwards?\n\nIf you'd like a progressive clue, click **"Give me a hint"** above!`;
+      }
+
+      setMentorMessages(prev => [...prev, { role: 'assistant', text: reply }]);
+      setIsMentorThinking(false);
+    }, 400);
+  };
 
   const handleResetCode = () => {
     const initial = problem.starterCode?.[language] || '';
@@ -298,6 +356,13 @@ export default function DungeonIDEView({
                 Problem
               </button>
               <button
+                className={`ide-tab-btn ${activeLeftTab === 'ai-mentor' ? 'is-active' : ''}`}
+                onClick={() => setActiveLeftTab('ai-mentor')}
+              >
+                <Sparkles size={14} className="tab-sub-icon text-gold" />
+                <span>AI Mentor</span>
+              </button>
+              <button
                 className={`ide-tab-btn ${activeLeftTab === 'hints' ? 'is-active' : ''}`}
                 onClick={() => setActiveLeftTab('hints')}
               >
@@ -386,6 +451,96 @@ export default function DungeonIDEView({
                     ))}
                   </ul>
                 </div>
+              </div>
+            )}
+
+            {/* AI Mentor Tab (CodeLab-Style Interactive Socratic Guidance) */}
+            {activeLeftTab === 'ai-mentor' && (
+              <div className="ai-mentor-panel-container">
+                {/* Quick Suggestion Chips */}
+                <div className="mentor-quick-prompts-bar">
+                  <span className="mentor-quick-label">Quick Guidance:</span>
+                  <div className="mentor-chips-scroll">
+                    <button
+                      type="button"
+                      className="mentor-chip-btn"
+                      onClick={() => handleAskMentor('Give me a conceptual hint without code')}
+                    >
+                      💡 Give Hint
+                    </button>
+                    <button
+                      type="button"
+                      className="mentor-chip-btn"
+                      onClick={() => handleAskMentor('What is the optimal Time and Space Complexity?')}
+                    >
+                      ⏱️ Complexity
+                    </button>
+                    <button
+                      type="button"
+                      className="mentor-chip-btn"
+                      onClick={() => handleAskMentor('Review my current code for edge cases')}
+                    >
+                      🔍 Edge Cases
+                    </button>
+                    <button
+                      type="button"
+                      className="mentor-chip-btn"
+                      onClick={() => handleAskMentor('How do I approach this step-by-step?')}
+                    >
+                      🧠 Approach
+                    </button>
+                  </div>
+                </div>
+
+                {/* Message Bubble Stream */}
+                <div className="mentor-chat-stream" ref={chatScrollRef}>
+                  {mentorMessages.map((msg, idx) => (
+                    <div key={idx} className={`mentor-chat-bubble ${msg.role}`}>
+                      <div className="bubble-avatar">
+                        {msg.role === 'assistant' ? '🤖' : '👤'}
+                      </div>
+                      <div className="bubble-text">
+                        {msg.text.split('\n\n').map((p, pIdx) => (
+                          <p key={pIdx}>{p}</p>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+
+                  {isMentorThinking && (
+                    <div className="mentor-chat-bubble assistant is-thinking">
+                      <div className="bubble-avatar">🤖</div>
+                      <div className="bubble-text">
+                        <span className="thinking-dots">Thinking...</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Chat Input Bar */}
+                <form
+                  className="mentor-input-form"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleAskMentor();
+                  }}
+                >
+                  <input
+                    type="text"
+                    className="mentor-text-input"
+                    placeholder="Ask your AI Mentor about this problem..."
+                    value={mentorInput}
+                    onChange={(e) => setMentorInput(e.target.value)}
+                    disabled={isMentorThinking}
+                  />
+                  <button
+                    type="submit"
+                    className="btn-mentor-send"
+                    disabled={!mentorInput.trim() || isMentorThinking}
+                  >
+                    <Send size={15} />
+                  </button>
+                </form>
               </div>
             )}
 

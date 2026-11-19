@@ -13,17 +13,23 @@ export default function DungeonPage() {
   const activeChapterId = query.chapter ? Number(query.chapter) : null;
   const activeProblemId = query.problem ? Number(query.problem) : null;
 
-  // Persisted Solved Problem IDs
-  // Initialize with [1, 2, 5, 6, 7, 8, 9, 10] (8 solved problems) to match the reference screenshot (8 / 12, 66%)
+  // Persisted Solved Problem IDs (100% dynamic - starts empty until user solves!)
   const [solvedProblemIds, setSolvedProblemIds] = useState(() => {
     try {
       const saved = localStorage.getItem('teklozyDungeonSolved');
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        // Clear old mock pre-solved list if present
+        const isMockSet = Array.isArray(parsed) && parsed.length === 8 &&
+          parsed.every(id => [1, 2, 5, 6, 7, 8, 9, 10].includes(id));
+        if (!isMockSet) {
+          return parsed;
+        }
+      }
     } catch (e) {}
-    // Default initial 8 solved problems matching Chapter 1 reference
-    const defaultSolved = [1, 2, 5, 6, 7, 8, 9, 10];
-    localStorage.setItem('teklozyDungeonSolved', JSON.stringify(defaultSolved));
-    return defaultSolved;
+    // Clean initial state: 0 solved problems
+    localStorage.setItem('teklozyDungeonSolved', JSON.stringify([]));
+    return [];
   });
 
   // Calculate unlocked chapters dynamically

@@ -2,11 +2,12 @@ import React from 'react';
 import { useApp } from '../context/AppContext';
 import {
   Home, Compass, BookOpen, Code2, Trophy, ArrowRight,
-  PanelLeftClose, PanelLeftOpen
+  PanelLeftClose, PanelLeftOpen, Sparkles
 } from 'lucide-react';
 
 const NAV_ITEMS = [
   { id: 'home', label: 'Home', icon: Home, route: 'home' },
+  { id: 'dungeon', label: 'DSA Dungeon', icon: Sparkles, route: 'dungeon', badge: 'Quest' },
   { id: 'learn', label: 'Learn', icon: BookOpen, route: 'learn' },
   { id: 'build', label: 'CodeLab', icon: Code2, route: 'build', badge: 'New' },
   { id: 'challenges', label: 'Challenges', icon: Trophy, route: 'challenges' }
@@ -30,6 +31,9 @@ export default function Sidebar() {
   const isNavActive = (item) => {
     if (item.id === 'home') {
       return currentPath === 'home' || currentPath.startsWith('level/');
+    }
+    if (item.id === 'dungeon') {
+      return currentPath === 'dungeon';
     }
     return currentPath === item.route;
   };

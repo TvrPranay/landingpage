@@ -14,7 +14,7 @@ export const DUNGEON_CHAPTERS = [
     gateBadge: '01',
     unlockedByDefault: true,
     requiredProblemsToUnlockNext: 8,
-    gateCoords: { left: 33.2, top: 71.3 },
+    gateCoords: { left: 42.7, top: 69.2 },
     xpReward: 1000,
     badgeName: 'Array Pioneer Badge',
     problems: [
@@ -800,7 +800,7 @@ export const DUNGEON_CHAPTERS = [
     gateBadge: '02',
     unlockedByDefault: false,
     requiredProblemsToUnlockNext: 8,
-    gateCoords: { left: 53.7, top: 67.5 },
+    gateCoords: { left: 70.0, top: 60.7 },
     xpReward: 1200,
     badgeName: 'Chain Master Badge',
     problems: [
@@ -920,7 +920,7 @@ export const DUNGEON_CHAPTERS = [
     gateBadge: '03',
     unlockedByDefault: false,
     requiredProblemsToUnlockNext: 8,
-    gateCoords: { left: 42.0, top: 46.9 },
+    gateCoords: { left: 53.5, top: 41.5 },
     xpReward: 1400,
     badgeName: 'Arboreal Sage Badge',
     problems: [
@@ -948,7 +948,7 @@ export const DUNGEON_CHAPTERS = [
     gateBadge: '04',
     unlockedByDefault: false,
     requiredProblemsToUnlockNext: 8,
-    gateCoords: { left: 67.4, top: 50.7 },
+    gateCoords: { left: 86.5, top: 43.7 },
     xpReward: 1600,
     badgeName: 'Graph Cartographer Badge',
     problems: [
@@ -976,7 +976,7 @@ export const DUNGEON_CHAPTERS = [
     gateBadge: '05',
     unlockedByDefault: false,
     requiredProblemsToUnlockNext: 8,
-    gateCoords: { left: 55.2, top: 35.6 },
+    gateCoords: { left: 71.5, top: 29.1 },
     xpReward: 1800,
     badgeName: 'DP Architect Badge',
     problems: [
@@ -1004,7 +1004,7 @@ export const DUNGEON_CHAPTERS = [
     gateBadge: '06',
     unlockedByDefault: false,
     requiredProblemsToUnlockNext: 12,
-    gateCoords: { left: 70.3, top: 26.3 },
+    gateCoords: { left: 91.0, top: 21.5 },
     xpReward: 2500,
     badgeName: 'Grandmaster Dungeon Slayer Badge',
     problems: [

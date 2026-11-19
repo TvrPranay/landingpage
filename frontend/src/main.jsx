@@ -50,7 +50,7 @@ function AppContent() {
       <div className="teklozy-layout-body">
         {!isStudioMode && <Sidebar />}
 
-        <main className={`teklozy-main-viewport ${isStudioMode ? 'viewport-fullwidth' : ''} ${routePath === 'build' ? 'viewport-codelab' : ''} ${routePath === 'home' ? 'viewport-home' : ''}`}>
+        <main className={`teklozy-main-viewport ${routePath === 'dungeon' ? 'viewport-dungeon' : isStudioMode ? 'viewport-fullwidth' : ''} ${routePath === 'build' ? 'viewport-codelab' : ''} ${routePath === 'home' ? 'viewport-home' : ''}`}>
           {renderActiveScreen()}
         </main>
       </div>

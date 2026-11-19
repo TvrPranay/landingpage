@@ -51,10 +51,10 @@ export default function DungeonHub({
 
   return (
     <div className="dungeon-hub-experience">
-      {/* Background artwork canvas */}
+      {/* Background artwork canvas (792px cavern, zero baked-in right panel!) */}
       <div className={`dungeon-canvas-viewport ${isTraveling ? 'is-traveling-to-gate' : ''}`}>
         <img
-          src="/dungeon-map-clean.jpg"
+          src="/dungeon-cavern-clean.jpg"
           alt="Teklozy DSA Dungeon Realm"
           className="dungeon-artwork-bg"
         />
@@ -68,34 +68,12 @@ export default function DungeonHub({
           </div>
         )}
 
-        {/* Top-Left Overlay Header & Feature Pills */}
-        <div className="dungeon-top-left-overlay">
+        {/* Top-Left Back Navigation Hotspot (Aligned over 'Side Quest' in artwork, no duplicate headings!) */}
+        <div className="dungeon-top-left-hotspot">
           <button className="btn-dungeon-back" onClick={onGoBack} title="Return to Side Quests">
             <ArrowLeft size={15} />
             <span>Side Quest</span>
           </button>
-
-          <div className="dungeon-title-group">
-            <h1 className="dungeon-main-heading">DSA <span className="highlight-gold">Dungeon</span></h1>
-            <p className="dungeon-subheading">
-              A gamified quest to master Data Structures and Algorithms with LeetCode.
-            </p>
-          </div>
-
-          <div className="dungeon-feature-pills-row">
-            <div className="dungeon-feature-pill">
-              <Code2 size={15} className="pill-icon text-cyan" />
-              <span>LeetCode Problems</span>
-            </div>
-            <div className="dungeon-feature-pill">
-              <Trophy size={15} className="pill-icon text-gold" />
-              <span>Quests & Levels</span>
-            </div>
-            <div className="dungeon-feature-pill">
-              <BarChart2 size={15} className="pill-icon text-blue" />
-              <span>Track Progress</span>
-            </div>
-          </div>
         </div>
 
         {/* Interactive Topic Gates Hotspots */}
@@ -116,35 +94,20 @@ export default function DungeonHub({
                 onMouseLeave={() => setHoveredGate(null)}
                 onClick={() => handleGateClick(ch)}
               >
-                {/* Gate Aura & Beacon */}
+                {/* Gate Aura Glow */}
                 <div className={`gate-aura-ring ${isUnlocked ? 'aura-glow' : ''}`} />
 
-                {/* Gate Click Target Button */}
+                {/* Gate Interactive Click Trigger */}
                 <button
                   className="gate-interactive-trigger"
                   aria-label={`Chapter ${ch.id}: ${ch.name} (${isUnlocked ? 'Unlocked' : 'Locked'})`}
                 >
-                  {/* Gate Card Label Overlay */}
-                  <div className="gate-floating-card">
-                    <div className="gate-card-badge-row">
-                      <span className="gate-number-badge">{ch.gateBadge}</span>
-                      <span className="gate-card-name">{ch.name}</span>
-                      {!isUnlocked && <Lock size={12} className="gate-lock-icon" />}
+                  {/* Gate 1 dynamic progress badge (sits cleanly over the pedestal, no clumsy boxes) */}
+                  {ch.id === 1 && (
+                    <div className="gate-pedestal-dynamic-tag">
+                      <span className="tag-count">{solvedCount} / {ch.problems.length}</span>
                     </div>
-
-                    {/* Progress Bar for Unlocked Gate */}
-                    {isUnlocked && (
-                      <div className="gate-card-progress-wrap">
-                        <div className="gate-card-progress-bar">
-                          <div
-                            className="gate-card-progress-fill"
-                            style={{ width: `${Math.round((solvedCount / ch.problems.length) * 100)}%` }}
-                          />
-                        </div>
-                        <span className="gate-card-count-text">{solvedCount} / {ch.problems.length}</span>
-                      </div>
-                    )}
-                  </div>
+                  )}
                 </button>
 
                 {/* Hover Popover Tooltip */}
@@ -166,7 +129,7 @@ export default function DungeonHub({
                       {isUnlocked ? (
                         <span>Enter Dungeon Gate →</span>
                       ) : (
-                        <span>Prerequisite: Finish Previous Chapter</span>
+                        <span>Solve Chapter {ch.id - 1} to unlock</span>
                       )}
                     </div>
                   </div>
