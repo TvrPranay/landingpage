@@ -76,6 +76,30 @@ export default function Topbar() {
         { label: `Level ${lvlNum} Milestone`, active: true }
       ];
     }
+    if (path === 'dungeon') {
+      if (query.problem) {
+        return [
+          { label: 'Home', route: 'home' },
+          { label: 'DSA Dungeon', route: 'dungeon' },
+          { label: 'Chapter', route: query.chapter ? `dungeon?chapter=${query.chapter}` : 'dungeon' },
+          { label: 'Problem Solving', active: true }
+        ];
+      }
+      if (query.chapter) {
+        return [
+          { label: 'Home', route: 'home' },
+          { label: 'DSA Dungeon', route: 'dungeon' },
+          { label: `Chapter ${query.chapter}`, active: true }
+        ];
+      }
+      return [
+        { label: 'Home', route: 'home' },
+        { label: 'Journey', route: 'home' },
+        { label: 'Level 2', route: 'level/2' },
+        { label: 'Side Quest', route: 'level/2' },
+        { label: 'DSA Dungeon', active: true }
+      ];
+    }
     if (path === 'learn') {
       return [{ label: 'Home', route: 'home' }, { label: 'Learning Space', active: true }];
     }

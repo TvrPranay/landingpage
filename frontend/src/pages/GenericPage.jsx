@@ -187,6 +187,18 @@ export default function GenericPage({ type }) {
                     </button>
                   </div>
 
+                  {lvlNum === 2 && (
+                    <div className="level-feature-card highlight-dungeon-card">
+                      <div className="feature-icon-circle text-gold"><Sparkles size={24} /></div>
+                      <h4>Side Quest: DSA Dungeon</h4>
+                      <p>Enter the gamified DSA Dungeon: master Arrays, Trees, Graphs & Dynamic Programming with LeetCode.</p>
+                      <button className="btn-card-action btn-dungeon-action" onClick={() => navigate('dungeon')}>
+                        <span>Enter DSA Dungeon</span>
+                        <ArrowRight size={14} />
+                      </button>
+                    </div>
+                  )}
+
                   <div className="level-feature-card">
                     <div className="feature-icon-circle"><Trophy size={24} /></div>
                     <h4>Algorithm Challenges</h4>
@@ -317,11 +329,11 @@ export default function GenericPage({ type }) {
             <span className="feature-status-tag live">Registration Open</span>
           </div>
 
-          <div className="workspace-feature-card">
+          <div className="workspace-feature-card highlight-card cursor-pointer" onClick={() => navigate('dungeon')}>
             <div className="feature-card-icon"><Zap size={24} /></div>
-            <h3>DSA Speed Tunnel</h3>
-            <p>Daily timed algorithmic exercises focused on arrays, trees, dynamic programming and graphs.</p>
-            <span className="feature-status-tag">Daily Sprint</span>
+            <h3>DSA Dungeon Quest</h3>
+            <p>Gamified algorithmic dungeon quest: conquer Arrays, Trees, Graphs, DP and LeetCode challenges.</p>
+            <span className="feature-status-tag live">Enter Quest &rarr;</span>
           </div>
 
           <div className="workspace-feature-card">

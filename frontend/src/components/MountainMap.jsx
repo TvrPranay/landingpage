@@ -59,16 +59,16 @@ export default function MountainMap() {
 
   // Exact coordinates (% left, % top) calibrated to align directly on glowing 3D artwork platforms
   const nodePositions = [
-    { left: 11.2, top: 78.5 },   // Level 1: Discover (Basecamp tent with green completed disc)
-    { left: 21.4, top: 69.5 },   // Level 2: Learn Basics (Current waypoint on trailhead platform)
-    { left: 37.0, top: 58.5 },   // Level 3: Learn Advanced (Villa terrace glowing cyan circular platform)
-    { left: 46.8, top: 44.5 },   // Level 4: Start Building (Slope path glowing disc)
-    { left: 52.5, top: 41.0 },   // Level 5: Networking (Observatory ridge glowing disc)
-    { left: 63.5, top: 33.5 },   // Level 6: Showcase (High ridge ledge glowing disc)
-    { left: 72.5, top: 27.5 },   // Level 7: Interview Prep (Alpine stone pass waypoint platform)
-    { left: 79.0, top: 46.5 },   // Level 8: Apply & Match (Lower switchback cliff terrace)
-    { left: 81.5, top: 24.5 },   // Level 9: Premium Access (Upper glacial ice bridge platform)
-    { left: 87.5, top: 18.0 }    // Level 10: Alumni Connect (Summit gateway platform)
+    { left: 11.6, top: 79.3 },   // Level 1: Discover (Basecamp tent with green completed disc)
+    { left: 21.4, top: 67.5 },   // Level 2: Learn Basics (Trailhead glowing concentric platform)
+    { left: 35.9, top: 57.6 },   // Level 3: Learn Advanced (Villa terrace circular platform)
+    { left: 47.3, top: 34.9 },   // Level 4: Start Building (Mid-ridge path glowing disc)
+    { left: 51.4, top: 37.5 },   // Level 5: Networking (Plateau waypoint glowing disc)
+    { left: 65.3, top: 25.7 },   // Level 6: Showcase (Bridge tower platform)
+    { left: 71.8, top: 28.3 },   // Level 7: Interview Prep (Alpine pass glowing disc)
+    { left: 79.5, top: 41.5 },   // Level 8: Apply & Match (Canyon lookout terrace platform)
+    { left: 81.2, top: 17.0 },   // Level 9: Premium Access (Upper glacial ice plateau disc)
+    { left: 87.0, top: 13.4 }    // Level 10: Alumni Connect (Summit gateway platform)
   ];
 
   const effectiveUnlocked = unlockedLevel || (isLevel1Complete ? 2 : 1);
@@ -209,7 +209,7 @@ export default function MountainMap() {
             {/* Interactive Summit Destination Halo Marker */}
             <div
               className="summit-shrine-marker"
-              style={{ left: '85.5%', top: '10.5%' }}
+              style={{ left: '85.5%', top: '7.5%' }}
               onClick={() => handleNodeClick(9)}
               title="The Teklozy Summit · Career Placement & Alumni Network"
             >
