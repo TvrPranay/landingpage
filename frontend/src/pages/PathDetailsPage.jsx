@@ -6,10 +6,11 @@ import {
 } from 'lucide-react';
 
 export default function PathDetailsPage() {
-  const { paths, selectedPath, navigate, completedLessons } = useApp();
+  const { paths, selectedPath, navigate, completedLessons, currentRoute } = useApp();
 
-  // Active path
-  const currentPath = selectedPath || paths[1]; // default to AI if undefined
+  // Active path determined directly by route query/slug or fallback to selectedPath
+  const routePathSlug = currentRoute.path.split('/')[1];
+  const currentPath = paths.find(p => p.id === routePathSlug) || selectedPath || paths[1];
   const isAI = currentPath.id === 'ai';
 
   const modulesList = currentPath.modules || [];

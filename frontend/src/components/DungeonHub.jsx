@@ -103,9 +103,16 @@ export default function DungeonHub({
                     className="gate-interactive-trigger"
                     aria-label={`Chapter ${ch.id}: ${ch.name} (${isUnlocked ? 'Unlocked' : 'Locked'})`}
                   >
-                    {/* Gate 1 dynamic progress badge over the progress track */}
+                    {/* Gate 1 dynamic progress badge over the plaque */}
                     {ch.id === 1 && (
                       <div className="gate-pedestal-dynamic-tag" title={`${solvedCount} of ${ch.problems.length} solved`}>
+                        <span className="gate-tag-name">Arrays & Strings</span>
+                        <div className="gate-tag-bar-track">
+                          <div
+                            className="gate-tag-bar-fill"
+                            style={{ width: `${Math.round((solvedCount / ch.problems.length) * 100)}%` }}
+                          />
+                        </div>
                         <span className="tag-count">{solvedCount} / {ch.problems.length}</span>
                       </div>
                     )}

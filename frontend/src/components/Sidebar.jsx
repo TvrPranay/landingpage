@@ -2,15 +2,15 @@ import React from 'react';
 import { useApp } from '../context/AppContext';
 import {
   Home, Compass, BookOpen, Code2, Trophy, ArrowRight,
-  PanelLeftClose, PanelLeftOpen, Sparkles
+  PanelLeftClose, PanelLeftOpen, Sparkles, Users
 } from 'lucide-react';
 
 const NAV_ITEMS = [
   { id: 'home', label: 'Home', icon: Home, route: 'home' },
-  { id: 'dungeon', label: 'DSA Dungeon', icon: Sparkles, route: 'dungeon', badge: 'Quest' },
   { id: 'learn', label: 'Learn', icon: BookOpen, route: 'learn' },
   { id: 'build', label: 'CodeLab', icon: Code2, route: 'build', badge: 'New' },
-  { id: 'challenges', label: 'Challenges', icon: Trophy, route: 'challenges' }
+  { id: 'challenges', label: 'Challenges', icon: Trophy, route: 'challenges' },
+  { id: 'clubs', label: 'Clubs', icon: Users, route: 'clubs' }
 ];
 
 export default function Sidebar() {
@@ -108,11 +108,11 @@ export default function Sidebar() {
               <button
                 className="event-cta-btn"
                 onClick={() => {
-                  navigate('challenges');
+                  navigate('hackathon');
                   setMobileMenuOpen(false);
                 }}
               >
-                <span>Explore Event</span>
+                <span>Explore Hackathon</span>
                 <ArrowRight size={12} />
               </button>
             </div>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   ArrowLeft, Check, Lock, ExternalLink, Play, Award, FileText,
-  BarChart2, Flame, Sparkles, ChevronRight, Shield
+  BarChart2, Flame, Sparkles, ChevronRight, Shield, Trophy
 } from 'lucide-react';
 import { DUNGEON_CHAPTERS } from '../data/dungeonData';
 
@@ -45,7 +45,7 @@ export default function DungeonChapterView({
 
   return (
     <div className="dungeon-chapter-experience">
-      {/* 1. TOP CHAPTER HERO BANNER (Matching Reference Image 2) */}
+      {/* 1. TOP CHAPTER HERO BANNER (Item 8: Clean, Spacious, No Image Fragments) */}
       <header className="chapter-hero-banner">
         {/* Left: Back button & Title with Glowing Hexagon Badge */}
         <div className="chapter-hero-left">
@@ -56,8 +56,7 @@ export default function DungeonChapterView({
           <div className="chapter-glowing-hex-badge">
             <div className="hex-outer-glow" />
             <div className="hex-inner-content">
-              {/* Connected nodes icon */}
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="18" cy="5" r="3" />
                 <circle cx="6" cy="12" r="3" />
                 <circle cx="18" cy="19" r="3" />
@@ -75,20 +74,15 @@ export default function DungeonChapterView({
           </div>
         </div>
 
-        {/* Center: Mini Dungeon Portal Graphic */}
-        <div className="chapter-hero-center-portal">
-          <img
-            src="/dungeon-portal-banner.png"
-            alt="Dungeon Portal Gateway"
-            className="portal-banner-img"
-            onError={(e) => {
-              // Graceful SVG fallback if image isn't loaded
-              e.target.style.display = 'none';
-            }}
-          />
+        {/* Center: Medieval Code Portal Arch */}
+        <div className="chapter-hero-center-arch" aria-hidden="true">
+          <div className="hero-arch-glow" />
+          <div className="hero-arch-badge">
+            <span className="arch-code-symbol">&lt;/&gt;</span>
+          </div>
         </div>
 
-        {/* Right: Chapter Progress & Glowing Treasure Chest */}
+        {/* Right: Chapter Progress & Clean SVG Trophy Reward */}
         <div className="chapter-hero-right-progress">
           <div className="chapter-progress-metrics">
             <div className="chapter-progress-labels">
@@ -99,24 +93,13 @@ export default function DungeonChapterView({
             <div className="cp-progress-bar-track">
               <div
                 className="cp-progress-bar-fill"
-                style={{ width: `${Math.max(6, chapterProgressPercent)}%` }}
+                style={{ width: `${Math.max(solvedInChapter > 0 ? 8 : 0, chapterProgressPercent)}%` }}
               />
             </div>
           </div>
 
-          {/* Treasure Chest Icon */}
-          <div className="chapter-treasure-chest-wrap" title={`${totalInChapter - solvedInChapter} problems left to unlock Chapter Chest!`}>
-            <div className="chest-radial-glow" />
-            <img
-              src="/dungeon-chest.png"
-              alt="Golden Treasure Chest"
-              className="dungeon-chest-img"
-              onError={(e) => {
-                // Fallback icon
-                e.target.style.display = 'none';
-              }}
-            />
-            <span className="chest-emoji-fallback">🎁</span>
+          <div className="chapter-chest-svg-wrap" title={`${totalInChapter - solvedInChapter} problems remaining to unlock Chapter Rewards`}>
+            <Trophy size={26} className={solvedInChapter >= 8 ? "text-gold" : "text-slate-400"} />
           </div>
         </div>
       </header>
@@ -138,14 +121,16 @@ export default function DungeonChapterView({
                 const isDone = ch.problems.filter(p => solvedProblemIds.includes(p.id)).length >= ch.requiredProblemsToUnlockNext;
 
                 return (
-                  <div key={ch.id} className="stepper-step-row">
-                    {/* Connecting line */}
+                  <div
+                    key={ch.id}
+                    className={`stepper-node-item ${isActive ? 'is-active' : ''} ${isDone ? 'is-done' : ''} ${isUnlocked ? 'is-unlocked' : 'is-locked'}`}
+                  >
                     {idx < DUNGEON_CHAPTERS.length - 1 && (
-                      <div className={`stepper-line ${isDone ? 'is-done' : ''}`} />
+                      <div className={`stepper-connector-line ${isDone ? 'done-line' : ''}`} />
                     )}
 
                     <button
-                      className={`stepper-node-pill ${isActive ? 'is-active' : ''} ${isUnlocked ? 'is-unlocked' : 'is-locked'} ${isDone ? 'is-done' : ''}`}
+                      className="stepper-node-btn"
                       onClick={() => {
                         if (isUnlocked) {
                           onSwitchChapter(ch.id);
@@ -166,7 +151,7 @@ export default function DungeonChapterView({
           </div>
         </aside>
 
-        {/* CENTER COLUMN: Practice Problems Table */}
+        {/* CENTER COLUMN: Practice Problems Table (Item 9: Clean, No Nested Scrollbars) */}
         <main className="chapter-col-problems-list">
           <div className="problems-panel-card">
             {/* Header & Filter Tabs Bar */}
@@ -208,7 +193,7 @@ export default function DungeonChapterView({
               </div>
             </div>
 
-            {/* Problems Rows List */}
+            {/* Problems Rows List - Clean & Scrollbar-Free */}
             <div className="problems-items-container">
               {filteredProblems.map((prob) => {
                 const isSolved = solvedProblemIds.includes(prob.id);
@@ -258,61 +243,64 @@ export default function DungeonChapterView({
         {/* RIGHT COLUMN: Chapter Rewards & Progress */}
         <aside className="chapter-col-sidebar-stats">
           {/* 1. Chapter Rewards Card */}
-          <div className="chapter-stats-card rewards-card">
-            <div className="stats-card-header">
-              <span className="stats-icon text-gold">🎁</span>
+          <div className="chapter-rewards-card">
+            <div className="rewards-card-header">
+              <span className="text-gold">🎁</span>
               <h3>Chapter Rewards</h3>
             </div>
 
-            <div className="chapter-rewards-grid">
-              <div className="chapter-reward-item">
-                <div className="cr-icon-box xp-box">
-                  <span>XP</span>
+            <div className="rewards-badges-row">
+              <div className="reward-badge-item">
+                <div className="reward-icon-hex xp-hex">
+                  <span className="badge-xp-text">XP</span>
                 </div>
-                <span className="cr-label">+1,000 XP</span>
+                <span className="reward-val">+{currentChapter.xpReward} XP</span>
               </div>
 
-              <div className="chapter-reward-item">
-                <div className="cr-icon-box badge-box">
-                  <Award size={20} className="text-gold" />
+              <div className="reward-badge-item">
+                <div className="reward-icon-hex badge-hex">
+                  <span className="badge-star-icon">★</span>
                 </div>
-                <span className="cr-label">DSA Badge</span>
+                <span className="reward-val">DSA Badge</span>
               </div>
 
-              <div className="chapter-reward-item">
-                <div className="cr-icon-box cert-box">
-                  <FileText size={18} className="text-purple" />
+              <div className="reward-badge-item">
+                <div className="reward-icon-hex cert-hex">
+                  <span className="badge-cert-icon">📜</span>
                 </div>
-                <span className="cr-label">Certificate</span>
+                <span className="reward-val">Certificate</span>
               </div>
             </div>
           </div>
 
           {/* 2. Your Progress Card */}
-          <div className="chapter-stats-card progress-card">
-            <div className="stats-card-header">
-              <span className="stats-icon text-gold">🎯</span>
+          <div className="chapter-user-progress-card">
+            <div className="user-progress-card-header">
+              <span className="text-gold">🎯</span>
               <h3>Your Progress</h3>
             </div>
 
-            <div className="sidebar-progress-stat-row">
-              <span className="sp-count"><strong>{solvedInChapter}</strong> / {totalInChapter} Problems Solved</span>
-              <span className="sp-percent">{chapterProgressPercent}%</span>
+            <div className="progress-card-metric-row">
+              <div className="metric-count-text">
+                <strong>{solvedInChapter}</strong> / {totalInChapter}
+                <span className="metric-caption">Problems Solved</span>
+              </div>
+              <span className="metric-percentage">{chapterProgressPercent}%</span>
             </div>
 
-            <div className="sp-progress-track">
+            <div className="user-progress-bar-track">
               <div
-                className="sp-progress-fill"
-                style={{ width: `${Math.max(6, chapterProgressPercent)}%` }}
+                className="user-progress-bar-fill"
+                style={{ width: `${Math.max(solvedInChapter > 0 ? 8 : 0, chapterProgressPercent)}%` }}
               />
             </div>
-          </div>
 
-          {/* 3. Continue Solving Action Button */}
-          <button className="btn-continue-solving-glow" onClick={handleContinueSolving}>
-            <Play size={17} fill="currentColor" />
-            <span>Continue Solving</span>
-          </button>
+            {/* Prominent Continue Solving CTA */}
+            <button className="btn-continue-solving-glow" onClick={handleContinueSolving}>
+              <Play size={18} fill="currentColor" />
+              <span>Continue Solving</span>
+            </button>
+          </div>
         </aside>
       </div>
     </div>

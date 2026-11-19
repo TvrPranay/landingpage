@@ -46,10 +46,61 @@ export default function DungeonIDEView({
   const chatScrollRef = useRef(null);
 
   // Editor State
-  const [language, setLanguage] = useState('javascript'); // 'javascript' | 'python'
+  const [language, setLanguage] = useState('javascript'); // 'javascript' | 'python' | 'java' | 'cpp' | 'c'
   const [code, setCode] = useState('');
   const [editorTheme, setEditorTheme] = useState('vs-dark');
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [leftWidthPercent, setLeftWidthPercent] = useState(44);
+  const isDraggingRef = useRef(false);
+
+  // Helper to generate boilerplate starter code for any language
+  const getStarterCode = (lang, prob) => {
+    if (prob.starterCode?.[lang]) return prob.starterCode[lang];
+    if (lang === 'javascript') {
+      return `function ${prob.slug?.replace(/-([a-z])/g, g => g[1].toUpperCase()) || 'solution'}(...args) {\n  // Write your solution here\n}`;
+    }
+    if (lang === 'python') {
+      return `def ${prob.slug?.replace(/-/g, '_') || 'solution'}(*args):\n    # Write your solution here\n    pass`;
+    }
+    if (lang === 'java') {
+      return `class Solution {\n    public int[] solution(int[] nums, int target) {\n        // Write your Java solution here\n        return new int[]{};\n    }\n}`;
+    }
+    if (lang === 'cpp') {
+      return `#include <iostream>\n#include <vector>\nusing namespace std;\n\nclass Solution {\npublic:\n    vector<int> solution(vector<int>& nums, int target) {\n        // Write your C++ solution here\n        return {};\n    }\n};`;
+    }
+    if (lang === 'c') {
+      return `#include <stdio.h>\n#include <stdlib.h>\n\nint* solution(int* nums, int numsSize, int target, int* returnSize) {\n    // Write your C solution here\n    *returnSize = 0;\n    return NULL;\n}`;
+    }
+    return '';
+  };
+
+  // Draggable divider handler
+  const handleMouseDownDivider = (e) => {
+    e.preventDefault();
+    isDraggingRef.current = true;
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+
+    const handleMouseMove = (moveEvent) => {
+      if (!isDraggingRef.current) return;
+      const containerWidth = window.innerWidth;
+      const newPercent = (moveEvent.clientX / containerWidth) * 100;
+      if (newPercent >= 25 && newPercent <= 65) {
+        setLeftWidthPercent(newPercent);
+      }
+    };
+
+    const handleMouseUp = () => {
+      isDraggingRef.current = false;
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+  };
 
   // Test Runner State
   const [activeTestTab, setActiveTestTab] = useState('cases'); // 'cases' | 'output'
@@ -68,7 +119,7 @@ export default function DungeonIDEView({
     if (saved) {
       setCode(saved);
     } else {
-      const initial = problem.starterCode?.[language] || '';
+      const initial = getStarterCode(language, problem);
       setCode(initial);
     }
     setTestResults(null);
@@ -127,10 +178,10 @@ export default function DungeonIDEView({
   };
 
   const handleResetCode = () => {
-    const initial = problem.starterCode?.[language] || '';
+    const initial = getStarterCode(language, problem);
     setCode(initial);
     localStorage.removeItem(`teklozy_dungeon_code_${problem.id}_${language}`);
-    triggerToast('Code reset to starter template.');
+    triggerToast(`Code reset to ${language.toUpperCase()} starter template.`);
   };
 
   const handleCodeChange = (newVal) => {
@@ -345,7 +396,7 @@ export default function DungeonIDEView({
       {/* 2. SPLIT WORKSPACE BODY */}
       <div className="ide-split-workspace">
         {/* LEFT COLUMN: Problem Description, Examples, Constraints, Hints */}
-        <section className="ide-left-pane">
+        <section className="ide-left-pane" style={{ width: `${leftWidthPercent}%` }}>
           {/* Tabs bar */}
           <div className="ide-pane-tabs-bar">
             <div className="ide-tabs-group">
@@ -393,7 +444,15 @@ export default function DungeonIDEView({
           {/* Tab Content Area */}
           <div className="ide-pane-scrollable-content">
             {activeLeftTab === 'problem' && (
-              <div className="problem-statement-article">
+              <div
+                className="problem-statement-article"
+                onCopy={(e) => {
+                  e.preventDefault();
+                  triggerToast('📋 Problem copy is disabled to maintain assessment integrity.');
+                }}
+                onContextMenu={(e) => e.preventDefault()}
+                style={{ userSelect: 'none' }}
+              >
                 {/* Problem Title Row */}
                 <div className="problem-title-hero-row">
                   <div className="problem-icon-cube">
@@ -578,8 +637,17 @@ export default function DungeonIDEView({
           </div>
         </section>
 
+        {/* Draggable Gutter Divider */}
+        <div
+          className="ide-drag-divider"
+          onMouseDown={handleMouseDownDivider}
+          title="Drag to resize Problem and Code panes"
+        >
+          <div className="drag-divider-handle" />
+        </div>
+
         {/* RIGHT COLUMN: Code Editor & Test Case Runner */}
-        <section className="ide-right-pane">
+        <section className="ide-right-pane" style={{ width: `${100 - leftWidthPercent}%` }}>
           {/* Editor Header Toolbar */}
           <div className="editor-top-toolbar">
             <div className="editor-tools-left">
@@ -590,8 +658,11 @@ export default function DungeonIDEView({
                   value={language}
                   onChange={(e) => setLanguage(e.target.value)}
                 >
-                  <option value="javascript">JavaScript</option>
-                  <option value="python">Python</option>
+                  <option value="javascript">JavaScript (ES6)</option>
+                  <option value="python">Python 3.11</option>
+                  <option value="java">Java 17</option>
+                  <option value="cpp">C++20</option>
+                  <option value="c">C11</option>
                 </select>
                 <ChevronDown size={14} className="select-arrow" />
               </div>
@@ -623,10 +694,16 @@ export default function DungeonIDEView({
           </div>
 
           {/* Monaco Code Editor Canvas */}
-          <div className="monaco-editor-container">
+          <div
+            className="monaco-editor-container"
+            onPaste={(e) => {
+              e.preventDefault();
+              triggerToast('🔒 Pasting external code is disabled in CodeLab. Type your solution to practice!');
+            }}
+          >
             <Editor
               height="100%"
-              language={language}
+              language={language === 'cpp' ? 'cpp' : language === 'c' ? 'c' : language === 'java' ? 'java' : language === 'python' ? 'python' : 'javascript'}
               theme={editorTheme}
               value={code}
               onChange={handleCodeChange}

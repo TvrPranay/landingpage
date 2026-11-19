@@ -13,6 +13,8 @@ import GenericPage from './pages/GenericPage';
 import CodeLabPage from './pages/CodeLabPage';
 import DungeonPage from './pages/DungeonPage';
 import Stage2Page from './pages/Stage2Page';
+import HackathonPage from './pages/HackathonPage';
+import ClubsPage from './pages/ClubsPage';
 import { CheckCircle2 } from 'lucide-react';
 import './styles/tokens.css';
 import './styles/redesign.css';
@@ -41,6 +43,8 @@ function AppContent() {
     if (routePath === 'dungeon' || routePath === 'tunnel/dsa') return <DungeonPage />;
     if (routePath === 'learn') return <LearnPage />;
     if (routePath === 'build') return <CodeLabPage />;
+    if (routePath === 'hackathon' || routePath === 'events') return <HackathonPage />;
+    if (routePath === 'clubs') return <ClubsPage />;
     if (routePath === 'challenges') return <GenericPage type="challenges" />;
     if (routePath === 'profile') return <GenericPage type="profile" />;
 
@@ -55,7 +59,7 @@ function AppContent() {
       <div className="teklozy-layout-body">
         {!isStudioMode && <Sidebar />}
 
-        <main className={`teklozy-main-viewport ${routePath === 'dungeon' ? 'viewport-dungeon' : isStudioMode ? 'viewport-fullwidth' : ''} ${routePath === 'build' ? 'viewport-codelab' : ''} ${routePath === 'home' ? 'viewport-home' : ''}`}>
+        <main className={`teklozy-main-viewport ${routePath === 'dungeon' || routePath === 'tunnel/dsa' ? 'viewport-dungeon' : isStudioMode ? 'viewport-fullwidth' : ''} ${routePath === 'build' ? 'viewport-codelab' : ''} ${routePath === 'home' ? 'viewport-home' : ''}`}>
           {renderActiveScreen()}
         </main>
       </div>

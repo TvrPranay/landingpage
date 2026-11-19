@@ -4,6 +4,7 @@ import {
   Menu, X, ChevronRight, ChevronDown, Flame, Zap, Bell, Settings,
   LogOut, Compass, BookOpen, Sparkles
 } from 'lucide-react';
+import StreakDashboardModal from './StreakDashboardModal';
 
 export default function Topbar() {
   const {
@@ -20,6 +21,7 @@ export default function Topbar() {
 
   const [profileOpen, setProfileOpen] = useState(false);
   const [noticeOpen, setNoticeOpen] = useState(false);
+  const [streakModalOpen, setStreakModalOpen] = useState(false);
 
   const profileRef = useRef(null);
   const noticeRef = useRef(null);
@@ -76,7 +78,7 @@ export default function Topbar() {
         { label: `Level ${lvlNum} Milestone`, active: true }
       ];
     }
-    if (path === 'dungeon') {
+    if (path === 'dungeon' || path === 'tunnel/dsa') {
       if (query.problem) {
         return [
           { label: 'Home', route: 'home' },
@@ -98,6 +100,20 @@ export default function Topbar() {
         { label: 'Level 2', route: 'level/2' },
         { label: 'Side Quest', route: 'level/2' },
         { label: 'DSA Dungeon', active: true }
+      ];
+    }
+    if (path === 'hackathon' || path === 'events') {
+      return [
+        { label: 'Home', route: 'home' },
+        { label: 'Events & Challenges', route: 'challenges' },
+        { label: 'Teklozy Hackathon 2026', active: true }
+      ];
+    }
+    if (path === 'clubs') {
+      return [
+        { label: 'Home', route: 'home' },
+        { label: 'Community', route: 'home' },
+        { label: 'Student Clubs & Chapters', active: true }
       ];
     }
     if (path === 'learn') {
@@ -153,11 +169,15 @@ export default function Topbar() {
 
       {/* Right stats & profile actions */}
       <div className="topbar-actions-area">
-        {/* Streak Pill */}
-        <div className="stat-badge-pill streak-pill" title="12 consecutive days of learning">
+        {/* Streak Pill - Clickable to open dedicated Streak Dashboard */}
+        <button
+          className="stat-badge-pill streak-pill clickable-pill"
+          onClick={() => setStreakModalOpen(true)}
+          title="Click to view Streak Dashboard & Activity Heatmap"
+        >
           <Flame size={15} className="streak-icon" />
           <span className="pill-text">12 Day Streak</span>
-        </div>
+        </button>
 
         {/* XP Pill */}
         <div className="stat-badge-pill xp-pill" title="Total experience points earned">
@@ -246,6 +266,12 @@ export default function Topbar() {
           )}
         </div>
       </div>
+
+      {/* Streak Dashboard Modal (Item 6) */}
+      <StreakDashboardModal
+        isOpen={streakModalOpen}
+        onClose={() => setStreakModalOpen(false)}
+      />
     </header>
   );
 }

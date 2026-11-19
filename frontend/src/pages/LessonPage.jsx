@@ -1,620 +1,595 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../context/AppContext';
 import {
   ChevronLeft, BookOpen, Target, Layers, NotebookPen, CircleHelp,
-  Check, Play, ArrowRight, Clock, Zap, Bookmark, FileText, Sparkles,
+  Check, Play, Pause, ArrowRight, Clock, Zap, Bookmark, FileText, Sparkles,
   RefreshCw, Lock, Lightbulb, Tv, Mail, Navigation, MessageSquare,
-  HelpCircle, Eye, CheckCircle2, ChevronRight
+  HelpCircle, Eye, CheckCircle2, ChevronRight, Volume2, VolumeX, Maximize2,
+  Subtitles, Download, ExternalLink, Award
 } from 'lucide-react';
 
-export default function LessonPage() {
-  const { currentRoute, navigate, selectedPath, paths, completedLessons, markLessonComplete, triggerToast } = useApp();
+// Timed captions for educational video lessons
+const LESSON_CAPTIONS = {
+  0: [
+    { start: 0, end: 5, text: "Welcome to Introduction to AI: Why Are We Building Machines That Can Think?" },
+    { start: 5, end: 12, text: "For centuries, computers followed strict, deterministic rules written by human programmers." },
+    { start: 12, end: 20, text: "Traditional code can calculate formulas, but it struggles with perception, speech, and reasoning." },
+    { start: 20, end: 30, text: "Machine learning flips this paradigm: instead of coding the rules, we train algorithms on real-world data." },
+    { start: 30, end: 42, text: "By minimizing error through loss functions, neural networks learn to recognize subtle multidimensional patterns." },
+    { start: 42, end: 55, text: "Today, intelligence powers recommendation systems, autonomous vehicles, and generative AI agents." },
+    { start: 55, end: 68, text: "In this module, you will master the foundational principles that allow models to generalize and reason." }
+  ],
+  4: [
+    { start: 0, end: 6, text: "How Does AI Actually Learn? Understanding Training, Weights, and Gradient Descent." },
+    { start: 6, end: 14, text: "A model begins with randomized numerical weights across its interconnected network layers." },
+    { start: 14, end: 24, text: "During forward propagation, input data flows through the layers to generate a preliminary prediction." },
+    { start: 24, end: 35, text: "A loss function calculates the mathematical delta between the prediction and the ground truth." },
+    { start: 35, end: 48, text: "Backpropagation uses calculus and gradient descent to nudge each weight in the optimal direction." },
+    { start: 48, end: 60, text: "Repeating this process over thousands of epochs is what enables models to reach production-grade accuracy." }
+  ]
+};
 
-  const currentPath = selectedPath || paths[1]; // default to AI
+// Curated quiz bank per module
+const MODULE_QUIZZES = {
+  0: {
+    question: "What is the primary difference between traditional software and machine learning?",
+    options: [
+      { id: 'a', text: "Traditional software uses hardcoded human rules; machine learning learns mathematical patterns from data.", correct: true },
+      { id: 'b', text: "Traditional software is slower and only works on mainframe computers.", correct: false },
+      { id: 'c', text: "Machine learning does not require computer hardware or processors.", correct: false },
+      { id: 'd', text: "There is no difference; they are identical programming techniques.", correct: false }
+    ],
+    explanation: "Traditional software requires humans to specify every condition manually. Machine learning extracts rules automatically by training numerical models on datasets."
+  },
+  1: {
+    question: "Which of the following best defines artificial intelligence in modern technology?",
+    options: [
+      { id: 'a', text: "Systems capable of performing tasks that historically required human cognition, such as visual recognition and reasoning.", correct: true },
+      { id: 'b', text: "A computer program that simply executes static SQL queries.", correct: false },
+      { id: 'c', text: "A hardware device that increases internet bandwidth.", correct: false }
+    ],
+    explanation: "AI encompasses algorithms and systems designed to mimic, augment, and automate cognitive capabilities like pattern perception and decision-making."
+  },
+  2: {
+    question: "Why does AI exist as a distinct engineering discipline?",
+    options: [
+      { id: 'a', text: "To automate complex, high-dimensional problems that are too intricate for static heuristic rules.", correct: true },
+      { id: 'b', text: "To replace human memory with simple spreadsheet calculators.", correct: false },
+      { id: 'c', text: "To render web page HTML buttons faster.", correct: false }
+    ],
+    explanation: "Real-world phenomena (like natural language, medical imaging, and driving) contain millions of variables that cannot be captured with manual if-else statements."
+  },
+  3: {
+    question: "Which everyday service heavily relies on machine learning recommendation engines?",
+    options: [
+      { id: 'a', text: "Streaming platforms like Netflix and Spotify that analyze behavioral vectors to suggest content.", correct: true },
+      { id: 'b', text: "A standard digital desk alarm clock.", correct: false },
+      { id: 'c', text: "A basic offline text notepad.", correct: false }
+    ],
+    explanation: "Recommendation systems utilize collaborative filtering and embeddings to model personal tastes and predict future engagement."
+  },
+  4: {
+    question: "How do neural networks iteratively refine their accuracy during training?",
+    options: [
+      { id: 'a', text: "Through backpropagation and gradient descent, which adjust model weights to minimize the loss function.", correct: true },
+      { id: 'b', text: "By randomly rebooting the operating system whenever an error occurs.", correct: false },
+      { id: 'c', text: "By rewriting the computer's CPU firmware.", correct: false }
+    ],
+    explanation: "Gradient descent computes partial derivatives with respect to weights, adjusting parameters in the direction of steepest descent to minimize loss."
+  }
+};
+
+export default function LessonPage() {
+  const { currentRoute, navigate, selectedPath, paths, completedLessons, markLessonComplete, triggerToast, awardXp } = useApp();
+
+  const routePathSlug = currentRoute.path.split('/')[1];
+  const currentPath = paths.find(p => p.id === routePathSlug) || selectedPath || paths[1];
   const modulesList = currentPath.modules || [];
 
-  const moduleIndex = Math.min(modulesList.length - 1, Math.max(0, Number(currentRoute.query.module ?? 2))); // default to lesson 3 for instant preview
+  const rawModule = Number(currentRoute.query.module ?? 0);
+  const moduleIndex = Math.min(modulesList.length - 1, Math.max(0, isNaN(rawModule) ? 0 : rawModule));
   const currentModule = modulesList[moduleIndex] || modulesList[0];
 
-  // Learning Format Mode: 'reading' | 'visual' | 'video'
-  const [learningMode, setLearningMode] = useState(() => {
-    if (currentModule.type === 'Video') return 'video';
-    if (currentModule.type === 'Visual') return 'visual';
-    return 'reading';
-  });
+  const isVideoModule = currentModule.type === 'Video';
 
-  // Sync mode when module changes
-  useEffect(() => {
-    if (currentModule.type === 'Video') setLearningMode('video');
-    else if (currentModule.type === 'Visual') setLearningMode('visual');
-    else setLearningMode('reading');
-  }, [moduleIndex, currentModule.type]);
+  // Active tab state: 'About' | 'Takeaways' | 'Resources' | 'Notes' | 'Quiz'
+  const [activeTab, setActiveTab] = useState(currentRoute.query.tab || 'About');
 
-  // Active sub-tab below video
-  const [activeTab, setActiveTab] = useState(currentRoute.query.tab || 'About'); // 'About' | 'Takeaways' | 'Resources' | 'Notes' | 'Quiz'
-
-  // Visual example selection
-  const [visualExample, setVisualExample] = useState('recommendation'); // 'recommendation' | 'spam' | 'routes'
-
-  // Video playback state
+  // Video playback engine state
+  const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [videoProgress, setVideoProgress] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(384); // 6:24 default
+  const [isMuted, setIsMuted] = useState(false);
+  const [playbackSpeed, setPlaybackSpeed] = useState(1);
+  const [subtitlesEnabled, setSubtitlesEnabled] = useState(true);
+  const [currentCaption, setCurrentCaption] = useState('');
 
   // Notes state
   const [noteContent, setNoteContent] = useState('');
   const [noteSaved, setNoteSaved] = useState(false);
 
   // Quiz state
-  const [quizAnswers, setQuizAnswers] = useState({});
+  const [selectedQuizOption, setSelectedQuizOption] = useState(null);
   const [quizSubmitted, setQuizSubmitted] = useState(false);
+  const [quizScoreAwarded, setQuizScoreAwarded] = useState(false);
 
-  // Load saved notes & quiz on module change
+  // Load saved notes and quiz state on module change
   useEffect(() => {
-    const savedNote = localStorage.getItem(`teklozy-note-${moduleIndex}`) || '';
+    setIsPlaying(false);
+    setCurrentTime(0);
+
+    const savedNote = localStorage.getItem(`teklozy-note-${currentPath.id}-${moduleIndex}`) || '';
     setNoteContent(savedNote);
     setNoteSaved(Boolean(savedNote));
 
-    const savedQuiz = localStorage.getItem(`teklozy-quiz-${moduleIndex}`);
+    const savedQuiz = localStorage.getItem(`teklozy-quiz-${currentPath.id}-${moduleIndex}`);
     if (savedQuiz) {
       try {
         const parsed = JSON.parse(savedQuiz);
-        setQuizAnswers(parsed.answers || {});
+        setSelectedQuizOption(parsed.selectedOption);
         setQuizSubmitted(true);
       } catch (e) {}
     } else {
-      setQuizAnswers({});
+      setSelectedQuizOption(null);
       setQuizSubmitted(false);
     }
-  }, [moduleIndex]);
+  }, [moduleIndex, currentPath.id]);
+
+  // Timed captions tracker
+  useEffect(() => {
+    if (!isVideoModule || !subtitlesEnabled) {
+      setCurrentCaption('');
+      return;
+    }
+    const captions = LESSON_CAPTIONS[moduleIndex] || LESSON_CAPTIONS[0];
+    const match = captions.find(c => currentTime >= c.start && currentTime <= c.end);
+    setCurrentCaption(match ? match.text : '');
+  }, [currentTime, moduleIndex, isVideoModule, subtitlesEnabled]);
+
+  // Video playback time updater
+  useEffect(() => {
+    let interval = null;
+    if (isPlaying) {
+      interval = setInterval(() => {
+        setCurrentTime(prev => {
+          if (prev >= duration) {
+            setIsPlaying(false);
+            return duration;
+          }
+          return prev + 1;
+        });
+      }, 1000 / playbackSpeed);
+    }
+    return () => clearInterval(interval);
+  }, [isPlaying, duration, playbackSpeed]);
+
+  const togglePlay = () => {
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.pause();
+        setIsPlaying(false);
+      } else {
+        videoRef.current.play().catch(() => {});
+        setIsPlaying(true);
+      }
+    } else {
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  const handleSeek = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const pos = (e.clientX - rect.left) / rect.width;
+    const newTime = Math.max(0, Math.min(duration, Math.round(pos * duration)));
+    setCurrentTime(newTime);
+    if (videoRef.current) {
+      videoRef.current.currentTime = newTime;
+    }
+  };
+
+  const cycleSpeed = () => {
+    const speeds = [1, 1.25, 1.5, 2];
+    const nextIdx = (speeds.indexOf(playbackSpeed) + 1) % speeds.length;
+    const nextSpeed = speeds[nextIdx];
+    setPlaybackSpeed(nextSpeed);
+    if (videoRef.current) {
+      videoRef.current.playbackRate = nextSpeed;
+    }
+  };
+
+  const formatTime = (secs) => {
+    const m = Math.floor(secs / 60);
+    const s = Math.floor(secs % 60);
+    return `${m}:${s < 10 ? '0' : ''}${s}`;
+  };
 
   const handleSaveNote = () => {
-    setNoteSaved(false);
-    localStorage.setItem(`teklozy-note-${moduleIndex}`, noteContent);
+    localStorage.setItem(`teklozy-note-${currentPath.id}-${moduleIndex}`, noteContent);
     setNoteSaved(true);
     triggerToast('Notes saved successfully.');
+  };
+
+  const currentQuiz = MODULE_QUIZZES[moduleIndex] || MODULE_QUIZZES[0];
+
+  const handleQuizSubmit = () => {
+    if (!selectedQuizOption) {
+      triggerToast('Please select an option first.');
+      return;
+    }
+    setQuizSubmitted(true);
+    localStorage.setItem(
+      `teklozy-quiz-${currentPath.id}-${moduleIndex}`,
+      JSON.stringify({ selectedOption: selectedQuizOption })
+    );
+
+    const chosen = currentQuiz.options.find(o => o.id === selectedQuizOption);
+    if (chosen?.correct) {
+      if (!quizScoreAwarded) {
+        awardXp(50);
+        setQuizScoreAwarded(true);
+      }
+      triggerToast('🎉 Correct answer! +50 XP awarded.');
+    } else {
+      triggerToast('Incorrect. Review the explanation and try again.');
+    }
   };
 
   const handleNextLesson = () => {
     markLessonComplete(moduleIndex);
     if (moduleIndex < modulesList.length - 1) {
-      navigate('lesson', { module: moduleIndex + 1 });
+      navigate('lesson', { module: moduleIndex + 1, tab: 'About' });
     } else {
-      triggerToast('🎉 Level 1 Complete! All foundational modules finished. Ascending to Level 2: Learn Basics!');
+      triggerToast('🎉 Level 1 Complete! Ascending to Level 2: Learn Basics!');
       navigate('level/2');
     }
   };
 
   const handlePrevLesson = () => {
     if (moduleIndex > 0) {
-      navigate('lesson', { module: moduleIndex - 1 });
+      navigate('lesson', { module: moduleIndex - 1, tab: 'About' });
     }
   };
 
-  const prevLesson = moduleIndex > 0 ? modulesList[moduleIndex - 1] : null;
-  const nextLesson = moduleIndex < modulesList.length - 1 ? modulesList[moduleIndex + 1] : null;
-
-  // Real world example data
-  const exampleData = {
-    recommendation: {
-      title: 'Recommending Content',
-      problem: {
-        bubble: "There are too many shows. How do I find something I'll like?",
-        brand: 'Netflix'
-      },
-      how: {
-        bubble: 'Learns from what you watch, like and skip.'
-      },
-      result: {
-        tag: 'Recommended for You',
-        text: "Shows you content you'll likely enjoy."
-      },
-      bigIdea: 'AI turns large, complex tasks (like finding the right content) into simple, personalized results.'
-    },
-    spam: {
-      title: 'Detecting Spam',
-      problem: {
-        bubble: 'Hundreds of suspicious phishing emails flood the inbox every hour.',
-        brand: 'Gmail'
-      },
-      how: {
-        bubble: 'Analyzes sender reputation, link signatures and semantic anomalies.'
-      },
-      result: {
-        tag: 'Clean Inbox Guaranteed',
-        text: 'Filters 99.9% of junk mail automatically before you see it.'
-      },
-      bigIdea: 'AI shields users from harm by spotting subtle anomalies that humans might easily overlook.'
-    },
-    routes: {
-      title: 'Navigating Routes',
-      problem: {
-        bubble: 'An unexpected highway accident has caused severe delays ahead.',
-        brand: 'Google Maps'
-      },
-      how: {
-        bubble: 'Synthesizes real-time sensor speeds and vehicle movement trajectories.'
-      },
-      result: {
-        tag: 'Fastest Reroute Found',
-        text: 'Dynamically reroutes through alternate streets saving 24 minutes.'
-      },
-      bigIdea: 'AI continuously adapts to shifting real-world conditions faster than any static map.'
-    }
-  };
-
-  const currentEx = exampleData[visualExample] || exampleData.recommendation;
-
-  const progressPercent = Math.round(((completedLessons.length) / modulesList.length) * 100);
+  const progressPercent = Math.round((completedLessons.length / modulesList.length) * 100);
 
   return (
-    <div className="lesson-experience-3col-shell">
-      {/* =========================================================================
-          COLUMN 1: LEFT SYLLABUS SIDEBAR
-          ========================================================================= */}
-      <aside className="lesson-sidebar-syllabus" aria-label="Module syllabus">
-        <button
-          className="syllabus-back-btn"
-          onClick={() => navigate(`path/${currentPath.id}`)}
-          title="Back to Module Overview"
-        >
-          <ChevronLeft size={18} />
-        </button>
-
-        <div className="syllabus-module-meta">
-          <span className="module-kicker">Module 01</span>
-          <h2 className="module-title">Introduction to AI</h2>
-          <div className="module-progress-line-row">
-            <div className="progress-bar-rail">
-              <div className="progress-bar-track" style={{ width: `${progressPercent}%` }} />
-            </div>
-            <span className="progress-pct-val">{progressPercent}%</span>
-          </div>
+    <div className="lesson-focused-studio-shell">
+      {/* Top Studio Bar */}
+      <header className="lesson-studio-topbar">
+        <div className="studio-topbar-left">
+          <button className="btn-studio-back" onClick={() => navigate(`path/${currentPath.id}`)} title="Back to Path Overview">
+            <ChevronLeft size={16} />
+            <span>{currentPath.name} Path</span>
+          </button>
+          <span className="studio-divider">/</span>
+          <span className="studio-current-crumb">Module {moduleIndex + 1}: {currentModule.title}</span>
         </div>
 
-        <nav className="syllabus-lesson-items-list" aria-label="Module Lessons">
-          {modulesList.map((m, idx) => {
-            const isCompleted = completedLessons.includes(idx);
-            const isCurrent = idx === moduleIndex;
-            const isLocked = !isCompleted && !isCurrent;
-
-            return (
-              <button
-                key={m.id || idx}
-                className={`syllabus-lesson-row ${isCurrent ? 'is-active' : ''} ${isCompleted ? 'is-done' : ''} ${isLocked ? 'is-locked' : ''}`}
-                onClick={() => navigate('lesson', { module: idx })}
-                disabled={isLocked}
-              >
-                <div className="row-status-disc">
-                  {isCompleted ? (
-                    <span className="status-check-circle"><Check size={12} strokeWidth={3} /></span>
-                  ) : isCurrent ? (
-                    <span className="status-play-circle"><Play size={11} fill="currentColor" /></span>
-                  ) : (
-                    <span className="status-lock-circle"><Lock size={12} /></span>
-                  )}
-                </div>
-
-                <div className="row-text-info">
-                  <span className="row-lesson-name">{idx + 1}. {m.title}</span>
-                  <span className="row-lesson-duration">{m.duration}</span>
-                </div>
-              </button>
-            );
-          })}
-        </nav>
-      </aside>
-
-      {/* =========================================================================
-          COLUMN 2: CENTER LESSON STAGE
-          ========================================================================= */}
-      <main className="lesson-stage-center">
-        {/* Lesson Heading Title */}
-        <div className="lesson-title-area">
-          <h1 className="lesson-primary-heading">{currentModule.title}</h1>
-          <p className="lesson-secondary-lead">
-            {learningMode === 'visual'
-              ? 'AI was created to solve real-world problems that are too complex, repetitive or time-consuming for humans to handle efficiently.'
-              : currentModule.desc}
-          </p>
+        <div className="studio-topbar-right">
+          <span className="studio-progress-pill">
+            <CheckCircle2 size={13} className="text-emerald-400" />
+            <span>{completedLessons.length} of {modulesList.length} Complete ({progressPercent}%)</span>
+          </span>
+          <span className="studio-xp-tag">+{currentModule.xp || 125} XP</span>
         </div>
+      </header>
 
-        {/* -----------------------------------------------------------------
-            VIEW 1: READING MODE (Matching Reference Image 1)
-            ----------------------------------------------------------------- */}
-        {learningMode === 'reading' && (
-          <div className="reading-mode-content-stack">
-            {/* The Problem Card */}
-            <section className="learning-feature-card problem-card">
-              <div className="card-illustration-pane">
-                <div className="paper-stack-illustration" aria-hidden="true">
-                  <div className="paper-sheet sheet-1" />
-                  <div className="paper-sheet sheet-2" />
-                  <div className="paper-sheet sheet-3" />
-                  <div className="paper-sheet sheet-top">
-                    <span className="doc-bar" />
-                    <span className="doc-bar" />
-                    <span className="doc-bar short" />
-                  </div>
-                </div>
-              </div>
-
-              <div className="card-copy-pane">
-                <h2 className="card-block-title">The problem</h2>
-                <ul className="bullet-feature-list">
-                  <li>Huge amounts of data to work with</li>
-                  <li>Repetitive and time-consuming tasks</li>
-                  <li>Hard to make fast and accurate decisions</li>
-                </ul>
-              </div>
-            </section>
-
-            {/* The Solution: AI Card */}
-            <section className="learning-feature-card solution-card">
-              <div className="card-illustration-pane">
-                <div className="laptop-ai-illustration" aria-hidden="true">
-                  <div className="laptop-screen-frame">
-                    <div className="laptop-screen-display">
-                      <span className="ai-neon-logo">AI</span>
-                    </div>
-                  </div>
-                  <div className="laptop-keyboard-base" />
-                </div>
-              </div>
-
-              <div className="card-copy-pane">
-                <h2 className="card-block-title">The solution: AI</h2>
-                <p className="solution-lead-paragraph">
-                  AI learns from data, automates work and finds patterns to help us make better decisions.
-                </p>
-              </div>
-            </section>
-          </div>
-        )}
-
-        {/* -----------------------------------------------------------------
-            VIEW 2: VISUAL LEARNING MODE (Matching Reference Image 2)
-            ----------------------------------------------------------------- */}
-        {learningMode === 'visual' && (
-          <div className="visual-learning-content-stack">
-            {/* Example Selection Selector */}
-            <div className="visual-example-filter-bar">
-              <span className="filter-prompt-label">Explore a real example:</span>
-              <div className="filter-pill-buttons">
-                <button
-                  className={`example-pill-btn ${visualExample === 'recommendation' ? 'active' : ''}`}
-                  onClick={() => setVisualExample('recommendation')}
-                >
-                  <Play size={12} fill="currentColor" />
-                  <span>Recommending Content</span>
-                </button>
-                <button
-                  className={`example-pill-btn ${visualExample === 'spam' ? 'active' : ''}`}
-                  onClick={() => setVisualExample('spam')}
-                >
-                  <Mail size={12} />
-                  <span>Detecting Spam</span>
-                </button>
-                <button
-                  className={`example-pill-btn ${visualExample === 'routes' ? 'active' : ''}`}
-                  onClick={() => setVisualExample('routes')}
-                >
-                  <Navigation size={12} />
-                  <span>Navigating Routes</span>
-                </button>
-              </div>
-            </div>
-
-            {/* 3-Step Flow Diagram Card */}
-            <div className="interactive-flow-diagram-card">
-              <div className="flow-stages-grid">
-                {/* Step 1: The Problem */}
-                <div className="flow-stage-col problem-col">
-                  <div className="stage-header-pill pill-purple">The Problem</div>
-                  <div className="stage-scene-box">
-                    <div className="thought-bubble-card">
-                      <span className="bubble-text">"{currentEx.problem.bubble}"</span>
-                    </div>
-                    <div className="illustration-actor user-actor">
-                      <div className="actor-avatar">👨‍💻</div>
-                      <div className="actor-laptop">
-                        <span className="laptop-brand-tag">{currentEx.problem.brand}</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Connecting Arrow */}
-                <div className="flow-arrow-connector">
-                  <ArrowRight size={22} className="arrow-svg" />
-                </div>
-
-                {/* Step 2: How AI Helps */}
-                <div className="flow-stage-col ai-col">
-                  <div className="stage-header-pill pill-blue">How AI Helps</div>
-                  <div className="stage-scene-box">
-                    <div className="robot-ai-avatar">
-                      <div className="robot-head">
-                        <div className="robot-antenna" />
-                        <div className="robot-face">
-                          <span className="robot-eye" />
-                          <span className="robot-eye" />
-                        </div>
-                        <div className="robot-ai-chip">AI</div>
-                      </div>
-                    </div>
-                    <p className="ai-mechanism-text">{currentEx.how.bubble}</p>
-                  </div>
-                </div>
-
-                {/* Connecting Arrow */}
-                <div className="flow-arrow-connector">
-                  <ArrowRight size={22} className="arrow-svg" />
-                </div>
-
-                {/* Step 3: The Result */}
-                <div className="flow-stage-col result-col">
-                  <div className="stage-header-pill pill-green">The Result</div>
-                  <div className="stage-scene-box">
-                    <div className="result-display-tv">
-                      <div className="tv-header-bar">{currentEx.result.tag}</div>
-                      <div className="tv-screen-content">
-                        <div className="tv-play-btn"><Play size={14} fill="currentColor" /></div>
-                      </div>
-                    </div>
-                    <div className="result-check-row">
-                      <CheckCircle2 size={16} className="green-check" />
-                      <span>{currentEx.result.text}</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Big Idea Mascot Callout */}
-              <div className="mascot-big-idea-strip">
-                <div className="mascot-fox-badge">
-                  <div className="fox-ears">
-                    <span className="ear-left" />
-                    <span className="ear-right" />
-                  </div>
-                  <div className="fox-head">
-                    <span className="fox-eye left" />
-                    <span className="fox-eye right" />
-                    <span className="fox-snout" />
-                  </div>
-                  <div className="fox-hoodie">T</div>
-                </div>
-
-                <div className="big-idea-text-box">
-                  <div className="bulb-pill">
-                    <Lightbulb size={14} className="bulb-icon" />
-                    <strong>The big idea:</strong>
-                  </div>
-                  <p>{currentEx.bigIdea}</p>
-                </div>
-              </div>
+      {/* Main Studio Workspace Grid */}
+      <div className="lesson-studio-main-grid">
+        {/* LEFT COLUMN: Module Drawer Navigation */}
+        <aside className="lesson-module-nav-drawer" aria-label="Course Modules Navigation">
+          <div className="module-nav-header">
+            <span className="module-nav-kicker">LEVEL 1 · FOUNDATIONS</span>
+            <h3>{currentPath.title}</h3>
+            <div className="module-track-progress-bar">
+              <div className="module-track-fill" style={{ width: `${progressPercent}%` }} />
             </div>
           </div>
-        )}
 
-        {/* -----------------------------------------------------------------
-            VIEW 3: VIDEO LEARNING MODE (Matching Reference Image 3)
-            ----------------------------------------------------------------- */}
-        {learningMode === 'video' && (
-          <div className="video-learning-content-stack">
-            {/* 16:9 Video Player */}
-            <div className="scenic-video-player-container">
-              <div className="video-player-canvas">
-                {/* Scenic Backdrop Artwork */}
-                <img
-                  src="/video-player-art.jpg"
-                  alt="Lesson Video Preview"
-                  className="video-backdrop-artwork"
+          <div className="module-nav-items-list" role="list">
+            {modulesList.map((mod, idx) => {
+              const isCompleted = completedLessons.includes(idx);
+              const isActive = idx === moduleIndex;
+
+              return (
+                <button
+                  key={mod.id || idx}
+                  className={`module-nav-item-btn ${isActive ? 'is-active' : ''} ${isCompleted ? 'is-completed' : ''}`}
+                  onClick={() => navigate('lesson', { module: idx, tab: activeTab })}
+                  role="listitem"
+                >
+                  <div className="nav-item-status-icon">
+                    {isCompleted ? (
+                      <Check size={14} className="text-emerald-400" strokeWidth={3} />
+                    ) : isActive ? (
+                      <Play size={12} className="text-blue-400" fill="currentColor" />
+                    ) : (
+                      <span className="nav-item-number">{idx + 1}</span>
+                    )}
+                  </div>
+                  <div className="nav-item-copy">
+                    <span className="nav-item-title">{mod.title}</span>
+                    <span className="nav-item-meta">{mod.duration} • {mod.type}</span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </aside>
+
+        {/* CENTER COLUMN: Interactive Player & Lesson Content */}
+        <main className="lesson-content-central-stage">
+          {/* Lesson Header Title */}
+          <div className="lesson-hero-header">
+            <div className="lesson-eyebrow-row">
+              <span className="lesson-format-badge">
+                {currentModule.type === 'Video' ? <Tv size={12} /> : currentModule.type === 'Visual' ? <Sparkles size={12} /> : <BookOpen size={12} />}
+                <span>{currentModule.type} Masterclass</span>
+              </span>
+              <span className="lesson-duration-badge"><Clock size={12} /> {currentModule.duration}</span>
+            </div>
+            <h1 className="lesson-h1-title">{currentModule.title}</h1>
+            <p className="lesson-lead-desc">{currentModule.desc}</p>
+          </div>
+
+          {/* MEDIA PLAYER SECTION */}
+          {isVideoModule ? (
+            <div className="lesson-video-player-frame">
+              <div className="video-player-aspect-box">
+                {/* Real HTML5 Video Element with Fallback Poster */}
+                <video
+                  ref={videoRef}
+                  className="lesson-html5-video"
+                  src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+                  poster="/video-player-art.jpg"
+                  onTimeUpdate={(e) => setCurrentTime(e.target.currentTime)}
+                  onLoadedMetadata={(e) => setDuration(e.target.duration || 384)}
+                  onEnded={() => setIsPlaying(false)}
+                  muted={isMuted}
+                  playsInline
                 />
 
-                {/* Central Play Trigger Button */}
+                {/* Big Center Play Trigger (when paused) */}
                 {!isPlaying && (
-                  <button
-                    className="video-center-orb-trigger"
-                    onClick={() => setIsPlaying(true)}
-                    aria-label="Play video"
-                  >
-                    <Play size={32} fill="currentColor" />
+                  <button className="video-center-glow-play" onClick={togglePlay} aria-label="Play Lesson Video">
+                    <Play size={36} fill="currentColor" />
                   </button>
                 )}
 
-                {/* Custom Video Scrubber Bar */}
-                <div className="video-custom-controls-overlay">
-                  <button className="ctrl-action-btn" onClick={() => setIsPlaying(!isPlaying)}>
-                    <Play size={15} fill="currentColor" />
-                  </button>
-                  <span className="ctrl-timestamp">0:00 / 6:24</span>
-                  <div className="ctrl-scrubber-rail">
-                    <div className="ctrl-scrubber-filled" style={{ width: isPlaying ? '35%' : '0%' }} />
+                {/* Subtitles Overlay (ONLY FOR VIDEO) */}
+                {subtitlesEnabled && currentCaption && (
+                  <div className="video-subtitles-caption-banner" role="status" aria-live="polite">
+                    <span>{currentCaption}</span>
                   </div>
-                  <span className="ctrl-badge-pill">CC</span>
-                  <span className="ctrl-badge-pill">1x</span>
-                  <button className="ctrl-action-btn" title="Fullscreen">⛶</button>
+                )}
+
+                {/* Custom Interactive Player Controls */}
+                <div className="video-controls-bottom-bar">
+                  <button className="ctrl-btn" onClick={togglePlay} aria-label={isPlaying ? 'Pause' : 'Play'}>
+                    {isPlaying ? <Pause size={17} fill="currentColor" /> : <Play size={17} fill="currentColor" />}
+                  </button>
+
+                  <button className="ctrl-btn" onClick={() => setIsMuted(!isMuted)} aria-label={isMuted ? 'Unmute' : 'Mute'}>
+                    {isMuted ? <VolumeX size={17} /> : <Volume2 size={17} />}
+                  </button>
+
+                  <span className="ctrl-timer">{formatTime(currentTime)} / {formatTime(duration)}</span>
+
+                  {/* Interactive Scrubber Rail */}
+                  <div className="ctrl-scrubber-container" onClick={handleSeek} role="slider" aria-valuenow={currentTime} aria-valuemax={duration}>
+                    <div className="ctrl-scrubber-track">
+                      <div className="ctrl-scrubber-progress" style={{ width: `${(currentTime / duration) * 100}%` }}>
+                        <div className="ctrl-scrubber-thumb" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Subtitles Toggle Button (Video Only) */}
+                  <button
+                    className={`ctrl-pill-toggle ${subtitlesEnabled ? 'is-active' : ''}`}
+                    onClick={() => setSubtitlesEnabled(!subtitlesEnabled)}
+                    title="Toggle Subtitles"
+                  >
+                    <Subtitles size={14} />
+                    <span>CC</span>
+                  </button>
+
+                  {/* Speed Selector */}
+                  <button className="ctrl-pill-toggle" onClick={cycleSpeed} title="Playback Speed">
+                    <span>{playbackSpeed}x</span>
+                  </button>
                 </div>
               </div>
             </div>
+          ) : (
+            /* Visual / Concept Interactive Reading View */
+            <div className="lesson-reading-card-frame">
+              <div className="reading-interactive-hero">
+                <div className="reading-hero-icon">
+                  <Sparkles size={32} className="text-blue-400" />
+                </div>
+                <div>
+                  <h3>Interactive Deep-Dive: Core Technical Concepts</h3>
+                  <p>Read through the architectural principles, examine real-world examples, and test your retention below.</p>
+                </div>
+              </div>
+            </div>
+          )}
 
-            {/* Sub-Navigation Tabs */}
-            <div className="video-subtabs-nav-bar" role="tablist">
-              <button
-                className={`tab-nav-btn ${activeTab === 'About' ? 'is-active' : ''}`}
-                onClick={() => setActiveTab('About')}
-                role="tab"
-              >
-                <BookOpen size={14} />
+          {/* LESSON NAVIGATION TABS */}
+          <div className="lesson-tabs-container">
+            <div className="lesson-tabs-nav-bar" role="tablist">
+              <button className={`lesson-tab-btn ${activeTab === 'About' ? 'is-active' : ''}`} onClick={() => setActiveTab('About')}>
+                <Target size={15} />
                 <span>About</span>
               </button>
-              <button
-                className={`tab-nav-btn ${activeTab === 'Takeaways' ? 'is-active' : ''}`}
-                onClick={() => setActiveTab('Takeaways')}
-                role="tab"
-              >
-                <Target size={14} />
+              <button className={`lesson-tab-btn ${activeTab === 'Takeaways' ? 'is-active' : ''}`} onClick={() => setActiveTab('Takeaways')}>
+                <CheckCircle2 size={15} />
                 <span>Key Takeaways</span>
               </button>
-              <button
-                className={`tab-nav-btn ${activeTab === 'Resources' ? 'is-active' : ''}`}
-                onClick={() => setActiveTab('Resources')}
-                role="tab"
-              >
-                <Layers size={14} />
+              <button className={`lesson-tab-btn ${activeTab === 'Resources' ? 'is-active' : ''}`} onClick={() => setActiveTab('Resources')}>
+                <FileText size={15} />
                 <span>Resources</span>
               </button>
-              <button
-                className={`tab-nav-btn ${activeTab === 'Notes' ? 'is-active' : ''}`}
-                onClick={() => setActiveTab('Notes')}
-                role="tab"
-              >
-                <NotebookPen size={14} />
+              <button className={`lesson-tab-btn ${activeTab === 'Notes' ? 'is-active' : ''}`} onClick={() => setActiveTab('Notes')}>
+                <NotebookPen size={15} />
                 <span>Notes</span>
               </button>
-              <button
-                className={`tab-nav-btn ${activeTab === 'Quiz' ? 'is-active' : ''}`}
-                onClick={() => setActiveTab('Quiz')}
-                role="tab"
-              >
-                <HelpCircle size={14} />
-                <span>Quick Check</span>
+              <button className={`lesson-tab-btn ${activeTab === 'Quiz' ? 'is-active' : ''}`} onClick={() => setActiveTab('Quiz')}>
+                <HelpCircle size={15} />
+                <span>Quiz & Checkpoint</span>
               </button>
             </div>
 
-            {/* Active Tab Panel Content */}
-            <div className="video-tab-panel-display">
+            {/* TAB CONTENTS */}
+            <div className="lesson-tab-panel-viewport">
+              {/* 1. ABOUT TAB */}
               {activeTab === 'About' && (
-                <div className="about-tab-card-split">
-                  <div className="about-copy-left">
-                    <div className="about-target-heading">
-                      <Target size={16} className="target-blue-icon" />
-                      <h3>What you'll learn</h3>
-                    </div>
-                    <ul className="about-check-bullets">
-                      <li>
-                        <Check size={14} className="check-blue" />
-                        <span>The idea behind intelligent machines.</span>
-                      </li>
-                      <li>
-                        <Check size={14} className="check-blue" />
-                        <span>Why this question started the AI journey.</span>
-                      </li>
-                      <li>
-                        <Check size={14} className="check-blue" />
-                        <span>How it connects to the rest of this module.</span>
-                      </li>
-                    </ul>
-                  </div>
-
-                  <div className="about-mascot-right">
-                    <div className="mascot-curious-avatar">
-                      <div className="thinking-bubble-cloud">?</div>
-                      <div className="mascot-fox-badge mini">
-                        <div className="fox-head">
-                          <span className="fox-eye left" />
-                          <span className="fox-eye right" />
-                          <span className="fox-snout" />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {activeTab === 'Takeaways' && (
-                <div className="takeaways-tab-display">
-                  <ul className="takeaways-expanded-list">
-                    <li><strong>Autonomous Generalization:</strong> AI systems detect patterns across multi-modal data.</li>
-                    <li><strong>Algorithmic Efficiency:</strong> Complex queries that take hours are solved in milliseconds.</li>
-                    <li><strong>Continuous Iteration:</strong> Models refine accuracy through backpropagation and feedback.</li>
+                <div className="tab-pane-content pane-about">
+                  <h3>Learning Objectives</h3>
+                  <ul className="learning-objectives-checklist">
+                    <li><Check size={16} className="text-emerald-400" /><span>Understand why classical imperative programming falls short on non-deterministic data.</span></li>
+                    <li><Check size={16} className="text-emerald-400" /><span>Grasp the mathematical foundation of loss optimization and parameter updates.</span></li>
+                    <li><Check size={16} className="text-emerald-400" /><span>Connect conceptual machine intelligence models to modern engineering pipelines.</span></li>
                   </ul>
+                  <div className="about-context-callout">
+                    <Lightbulb size={18} className="text-amber-400" />
+                    <p><strong>Pro-Tip:</strong> Machine learning does not replace software architecture; it introduces dynamic probabilistic components into existing distributed architectures.</p>
+                  </div>
                 </div>
               )}
 
+              {/* 2. KEY TAKEAWAYS */}
+              {activeTab === 'Takeaways' && (
+                <div className="tab-pane-content pane-takeaways">
+                  <div className="takeaways-grid-cards">
+                    <div className="takeaway-card">
+                      <div className="takeaway-num">01</div>
+                      <h4>Pattern Recognition</h4>
+                      <p>Models discover statistical regularities across millions of inputs, allowing them to generalize to unseen test data.</p>
+                    </div>
+                    <div className="takeaway-card">
+                      <div className="takeaway-num">02</div>
+                      <h4>Loss & Optimization</h4>
+                      <p>Training is an iterative mathematical search through weight space using gradient vectors to find optimal minima.</p>
+                    </div>
+                    <div className="takeaway-card">
+                      <div className="takeaway-num">03</div>
+                      <h4>Continuous Iteration</h4>
+                      <p>Unlike static code that never changes once compiled, AI systems adapt continuously as new data distributions emerge.</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* 3. RESOURCES TAB */}
               {activeTab === 'Resources' && (
-                <div className="resources-tab-display">
-                  <div className="resource-link-row">
-                    <FileText size={15} />
-                    <div>
-                      <strong>Lecture Notes: Foundations of Machine Learning</strong>
-                      <small>PDF Document · 1.4 MB</small>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {activeTab === 'Notes' && (
-                <div className="notes-tab-display">
-                  <textarea
-                    className="notes-textarea"
-                    placeholder="Write private notes on this lesson... Automatically saved to your profile."
-                    value={noteContent}
-                    onChange={(e) => setNoteContent(e.target.value)}
-                  />
-                  <div className="notes-footer-action">
-                    <button className="save-notes-btn" onClick={handleSaveNote}>
-                      {noteSaved ? '✓ Saved' : 'Save Notes'}
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {activeTab === 'Quiz' && (
-                <div className="quiz-tab-display">
-                  <div className="quiz-tab-card">
-                    <div className="quiz-tab-card-header">
-                      <div className="quiz-header-badge">
-                        <Zap size={14} className="quick-bolt-icon" />
-                        <span>Concept Checkpoint · +25 XP</span>
+                <div className="tab-pane-content pane-resources">
+                  <div className="resources-downloads-list">
+                    <a className="resource-download-row" href="#/resources" onClick={(e) => { e.preventDefault(); triggerToast('Downloading module reference cheatsheet (PDF)...'); }}>
+                      <div className="res-icon-wrap"><FileText size={18} /></div>
+                      <div className="res-meta-col">
+                        <strong>Official Module Cheat Sheet & Summary</strong>
+                        <span>PDF Reference Guide • 2.4 MB</span>
                       </div>
-                    </div>
-                    <h3 className="quiz-tab-q-title">Which problem is a good use for AI?</h3>
-                    <p className="quiz-tab-q-sub">Select the scenario that best leverages machine intelligence and high-dimensional pattern recognition:</p>
+                      <Download size={16} className="text-blue-400" />
+                    </a>
+                    <a className="resource-download-row" href="https://github.com" target="_blank" rel="noopener noreferrer">
+                      <div className="res-icon-wrap"><ExternalLink size={18} /></div>
+                      <div className="res-meta-col">
+                        <strong>Interactive Jupyter Notebook Playground</strong>
+                        <span>GitHub Repository • Open Source Code</span>
+                      </div>
+                      <ExternalLink size={16} className="text-blue-400" />
+                    </a>
+                  </div>
+                </div>
+              )}
 
-                    <div className="quiz-tab-options-stack">
-                      {[
-                        { id: 'opt-a', text: 'Recommending content and shows by analyzing subtle behavioral patterns across millions of users', correct: true },
-                        { id: 'opt-b', text: 'Typing an individual personal letter manually on a mechanical typewriter', correct: false },
-                        { id: 'opt-c', text: 'Calculating simple static arithmetic (like 2 + 2) by hand with pencil and paper', correct: false }
-                      ].map((opt) => {
-                        const isChosen = quizAnswers[moduleIndex] === opt.id;
+              {/* 4. NOTES TAB */}
+              {activeTab === 'Notes' && (
+                <div className="tab-pane-content pane-notes">
+                  <div className="notes-editor-card">
+                    <div className="notes-card-header">
+                      <span>Personal Learning Scratchpad</span>
+                      {noteSaved && <span className="notes-saved-indicator"><Check size={13} /> Saved in local storage</span>}
+                    </div>
+                    <textarea
+                      className="notes-custom-textarea"
+                      placeholder="Type your notes here... Key equations, architectural ideas, or questions for mentors."
+                      value={noteContent}
+                      onChange={(e) => {
+                        setNoteContent(e.target.value);
+                        setNoteSaved(false);
+                      }}
+                    />
+                    <div className="notes-actions-bar">
+                      <button className="btn-save-notes" onClick={handleSaveNote}>
+                        <Bookmark size={14} />
+                        <span>Save Notes</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* 5. QUIZ TAB */}
+              {activeTab === 'Quiz' && (
+                <div className="tab-pane-content pane-quiz">
+                  <div className="quiz-interactive-card">
+                    <div className="quiz-card-top-tag">
+                      <Zap size={14} className="text-amber-400" />
+                      <span>Knowledge Checkpoint • +50 XP</span>
+                    </div>
+
+                    <h3 className="quiz-question-heading">{currentQuiz.question}</h3>
+
+                    <div className="quiz-options-container">
+                      {currentQuiz.options.map((opt) => {
+                        const isSelected = selectedQuizOption === opt.id;
+                        let optionClass = 'quiz-option-choice';
+                        if (quizSubmitted) {
+                          if (opt.correct) optionClass += ' is-correct-answer';
+                          else if (isSelected && !opt.correct) optionClass += ' is-wrong-answer';
+                        } else if (isSelected) {
+                          optionClass += ' is-selected';
+                        }
+
                         return (
                           <button
                             key={opt.id}
-                            className={`quiz-tab-option-btn ${isChosen ? (opt.correct ? 'is-correct' : 'is-wrong') : ''}`}
-                            onClick={() => {
-                              setQuizAnswers(prev => {
-                                const next = { ...prev, [moduleIndex]: opt.id };
-                                localStorage.setItem(`teklozy-quiz-${moduleIndex}`, JSON.stringify({ answers: next }));
-                                return next;
-                              });
-                              setQuizSubmitted(true);
-                              if (opt.correct) {
-                                triggerToast('🎉 Correct! AI excels at large-scale pattern detection (+25 XP).');
-                              }
-                            }}
+                            className={optionClass}
+                            onClick={() => !quizSubmitted && setSelectedQuizOption(opt.id)}
+                            disabled={quizSubmitted}
                           >
-                            <span className="quiz-opt-radio">
-                              {isChosen ? (opt.correct ? <Check size={12} strokeWidth={3} /> : '✕') : ''}
+                            <span className="quiz-radio-indicator">
+                              {quizSubmitted && opt.correct ? (
+                                <Check size={14} strokeWidth={3} className="text-white" />
+                              ) : quizSubmitted && isSelected && !opt.correct ? (
+                                '✕'
+                              ) : isSelected ? (
+                                '●'
+                              ) : null}
                             </span>
-                            <span className="quiz-opt-text">{opt.text}</span>
+                            <span className="quiz-option-text">{opt.text}</span>
                           </button>
                         );
                       })}
                     </div>
 
-                    {quizAnswers[moduleIndex] && (
-                      <div className={`quiz-tab-explanation ${quizAnswers[moduleIndex] === 'opt-a' ? 'is-success' : 'is-error'}`}>
-                        {quizAnswers[moduleIndex] === 'opt-a' ? (
-                          <p>
-                            <strong>✓ Spot on!</strong> AI thrives at identifying subtle preferences, habits, and latent relationships across massive multi-dimensional datasets that humans could never process manually.
-                          </p>
-                        ) : (
-                          <p>
-                            <strong>✗ Not quite.</strong> That scenario represents simple mechanical repetition or straightforward arithmetic. AI is specifically designed for complex, high-scale pattern recognition and adaptive decision making.
-                          </p>
-                        )}
+                    {!quizSubmitted ? (
+                      <button className="btn-submit-quiz" onClick={handleQuizSubmit}>
+                        <span>Submit Answer</span>
+                        <ArrowRight size={14} />
+                      </button>
+                    ) : (
+                      <div className="quiz-explanation-box">
+                        <div className="explanation-title">
+                          <CheckCircle2 size={16} className="text-emerald-400" />
+                          <span>Concept Explanation</span>
+                        </div>
+                        <p>{currentQuiz.explanation}</p>
                       </div>
                     )}
                   </div>
@@ -622,87 +597,25 @@ export default function LessonPage() {
               )}
             </div>
           </div>
-        )}
 
-        {/* -----------------------------------------------------------------
-            BOTTOM NAVIGATION BAR (Matching Reference Designs)
-            ----------------------------------------------------------------- */}
-        <footer className="lesson-stage-footer-nav">
-          {prevLesson ? (
-            <button className="btn-nav-prev" onClick={handlePrevLesson}>
+          {/* Bottom Next/Prev Pagination Controls */}
+          <div className="lesson-bottom-stepper-bar">
+            <button
+              className="btn-stepper-prev"
+              onClick={handlePrevLesson}
+              disabled={moduleIndex === 0}
+            >
               <ChevronLeft size={16} />
-              <span>Previous: {prevLesson.title.split('—')[0].trim()}</span>
+              <span>Previous Lesson</span>
             </button>
-          ) : (
-            <div />
-          )}
 
-          {nextLesson ? (
-            <button className="btn-nav-next" onClick={handleNextLesson}>
-              <span>Next: {nextLesson.title.split('—')[0].trim()}</span>
+            <button className="btn-stepper-next" onClick={handleNextLesson}>
+              <span>{moduleIndex === modulesList.length - 1 ? 'Complete Level 1 & Ascend' : 'Complete & Continue Next'}</span>
               <ArrowRight size={16} />
             </button>
-          ) : (
-            <button className="btn-nav-next finish-btn" onClick={handleNextLesson}>
-              <span>Complete Level 1 & Unlock Level 2</span>
-              <Check size={16} strokeWidth={3} />
-            </button>
-          )}
-        </footer>
-      </main>
-
-      {/* =========================================================================
-          COLUMN 3: RIGHT INSIGHTS SIDEBAR (Streamlined - No Duplicate Content)
-          ========================================================================= */}
-      <aside className="lesson-sidebar-insights" aria-label="Lesson insights and progress">
-        {/* Real-World Examples */}
-        <section className="insight-card examples-card">
-          <div className="examples-header-row">
-            <Layers size={16} className="box-blue-icon" />
-            <h3>Real-World Examples</h3>
           </div>
-
-          <div className="examples-brand-grid">
-            <div className="brand-example-item">
-              <div className="brand-logo-badge brand-netflix">N</div>
-              <strong>Netflix</strong>
-              <small>Recommends shows you'll like.</small>
-            </div>
-
-            <div className="brand-example-item">
-              <div className="brand-logo-badge brand-maps">📍</div>
-              <strong>Maps</strong>
-              <small>Finds the fastest route for you.</small>
-            </div>
-
-            <div className="brand-example-item">
-              <div className="brand-logo-badge brand-chatgpt">🤖</div>
-              <strong>Chatbots</strong>
-              <small>Answers your questions instantly.</small>
-            </div>
-          </div>
-        </section>
-
-        {/* Up Next in this Module (For Video View) */}
-        {learningMode === 'video' && (
-          <section className="insight-card up-next-card">
-            <div className="card-top-header">
-              <h3>Up Next in this Module</h3>
-            </div>
-            <div className="up-next-items-list">
-              {modulesList.slice(moduleIndex + 1).map((nextMod, i) => (
-                <div key={nextMod.id || i} className="up-next-row">
-                  <div className="up-next-left">
-                    <Lock size={13} className="lock-subtle" />
-                    <span>{moduleIndex + 2 + i}. {nextMod.title.split('—')[0].trim()}</span>
-                  </div>
-                  <span className="up-next-duration">{nextMod.duration}</span>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-      </aside>
+        </main>
+      </div>
     </div>
   );
 }
