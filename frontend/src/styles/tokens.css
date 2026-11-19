@@ -1,0 +1,59 @@
+/* Teklozy design tokens — sampled from the three reference designs. */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+
+:root {
+  --tk-font-display: 'Plus Jakarta Sans', 'Manrope', 'Inter', system-ui, sans-serif;
+  --tk-font-body: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+
+  --tk-blue-50: #eef4ff;
+  --tk-blue-100: #dbe8ff;
+  --tk-blue-200: #bcd4ff;
+  --tk-blue-400: #3b82ff;
+  --tk-blue-500: #0b63f6;
+  --tk-blue-600: #0058fe;
+  --tk-blue-700: #0047d4;
+  --tk-grad-primary: linear-gradient(180deg, #2a7bff 0%, #0656e8 100%);
+  --tk-grad-primary-hover: linear-gradient(180deg, #3d88ff 0%, #0a5cf2 100%);
+
+  --tk-navy-900: #0b1a38;
+  --tk-navy-800: #0f294e;
+  --tk-navy-700: #163563;
+  --tk-ink: #0f1b3d;
+  --tk-ink-soft: #2a3756;
+  --tk-muted: #5c6a86;
+  --tk-faint: #93a0b8;
+
+  --tk-green-500: #22b14c;
+  --tk-green-600: #15963b;
+  --tk-green-50: #e8f8ec;
+  --tk-gold-500: #f7b51d;
+  --tk-orange-500: #ff7a1a;
+  --tk-purple-700: #402598;
+  --tk-purple-900: #2a1677;
+  --tk-grey-locked: #8e98ab;
+  --tk-grey-200: #e3e9f3;
+  --tk-grey-100: #eef2f8;
+
+  --tk-page-bg: #f4f7fd;
+  --tk-surface: #ffffff;
+  --tk-surface-soft: #f7faff;
+  --tk-border: #e3eaf5;
+  --tk-border-strong: #cfdcf0;
+
+  --tk-radius-sm: 10px;
+  --tk-radius-md: 14px;
+  --tk-radius-lg: 18px;
+  --tk-radius-xl: 22px;
+  --tk-radius-pill: 999px;
+
+  --tk-shadow-xs: 0 1px 2px rgba(15, 41, 78, 0.06);
+  --tk-shadow-sm: 0 2px 8px rgba(15, 41, 78, 0.07);
+  --tk-shadow-md: 0 8px 24px rgba(15, 41, 78, 0.09);
+  --tk-shadow-lg: 0 18px 44px rgba(15, 41, 78, 0.14);
+  --tk-shadow-blue: 0 8px 20px rgba(11, 99, 246, 0.28);
+
+  --tk-topnav-h: 68px;
+  --tk-sidebar-w: 250px;
+  --tk-right-w: 480px;
+  --tk-ease: cubic-bezier(0.16, 1, 0.3, 1);
+}

@@ -12,7 +12,11 @@ import LearnPage from './pages/LearnPage';
 import GenericPage from './pages/GenericPage';
 import CodeLabPage from './pages/CodeLabPage';
 import DungeonPage from './pages/DungeonPage';
+import Stage2Page from './pages/Stage2Page';
 import { CheckCircle2 } from 'lucide-react';
+import './styles/tokens.css';
+import './styles/redesign.css';
+import './styles/journey-redesign.css';
 import './style.css';
 
 function AppContent() {
@@ -24,16 +28,17 @@ function AppContent() {
     return <AuthPage />;
   }
 
-  // Full-width distraction-free studio for Lesson, Path Details, and DSA Dungeon
-  const isStudioMode = routePath === 'lesson' || routePath.startsWith('path/') || routePath === 'dungeon';
+  // Full-width distraction-free studio for Lesson, Path Details, Stage 2, and DSA Dungeon
+  const isStudioMode = routePath === 'lesson' || routePath.startsWith('path/') || routePath === 'dungeon' || routePath === 'tunnel/dsa';
 
   const renderActiveScreen = () => {
     if (routePath === 'home') return <HomePage />;
     if (routePath === 'discover') return <PathSelectionPage />;
     if (routePath.startsWith('path/')) return <PathDetailsPage />;
+    if (routePath === 'stage2') return <Stage2Page />;
     if (routePath === 'lesson') return <LessonPage />;
     if (routePath.startsWith('level/')) return <GenericPage type="level" />;
-    if (routePath === 'dungeon') return <DungeonPage />;
+    if (routePath === 'dungeon' || routePath === 'tunnel/dsa') return <DungeonPage />;
     if (routePath === 'learn') return <LearnPage />;
     if (routePath === 'build') return <CodeLabPage />;
     if (routePath === 'challenges') return <GenericPage type="challenges" />;

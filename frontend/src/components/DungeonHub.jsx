@@ -51,117 +51,102 @@ export default function DungeonHub({
 
   return (
     <div className="dungeon-hub-experience">
-      {/* Background artwork canvas (792px cavern, zero baked-in right panel!) */}
+      {/* Background artwork canvas (792x525 cavern, locked aspect ratio so NOTHING is clipped!) */}
       <div className={`dungeon-canvas-viewport ${isTraveling ? 'is-traveling-to-gate' : ''}`}>
-        <img
-          src="/dungeon-cavern-clean.jpg"
-          alt="Teklozy DSA Dungeon Realm"
-          className="dungeon-artwork-bg"
-        />
-        <div className="dungeon-ambient-overlay" />
+        <div className="dungeon-art-stage">
+          <img
+            src="/dungeon-cavern-clean.jpg"
+            alt="Teklozy DSA Dungeon Realm"
+            className="dungeon-artwork-bg"
+          />
+          <div className="dungeon-ambient-overlay" />
 
-        {/* Traveling Zoom Indicator */}
-        {isTraveling && (
-          <div className="dungeon-travel-indicator">
-            <Sparkles size={20} className="travel-sparkle-spin" />
-            <span>Entering Chapter {travelingChapter?.id}: {travelingChapter?.name}...</span>
+          {/* Traveling Zoom Indicator */}
+          {isTraveling && (
+            <div className="dungeon-travel-indicator">
+              <Sparkles size={20} className="travel-sparkle-spin" />
+              <span>Entering Chapter {travelingChapter?.id}: {travelingChapter?.name}...</span>
+            </div>
+          )}
+
+          {/* Top-Left Back Navigation Hotspot (Aligned over 'Side Quest' in artwork) */}
+          <div className="dungeon-top-left-hotspot">
+            <button className="btn-dungeon-back" onClick={onGoBack} title="Return to Side Quests">
+              <ArrowLeft size={15} />
+              <span>Side Quest</span>
+            </button>
           </div>
-        )}
 
-        {/* Top-Left Back Navigation Hotspot (Aligned over 'Side Quest' in artwork, no duplicate headings!) */}
-        <div className="dungeon-top-left-hotspot">
-          <button className="btn-dungeon-back" onClick={onGoBack} title="Return to Side Quests">
-            <ArrowLeft size={15} />
-            <span>Side Quest</span>
-          </button>
-        </div>
+          {/* Interactive Topic Gates Hotspots */}
+          <div className="dungeon-gates-layer">
+            {DUNGEON_CHAPTERS.map((ch) => {
+              const isUnlocked = unlockedChapterIds.includes(ch.id);
+              const solvedCount = ch.problems.filter(p => solvedProblemIds.includes(p.id)).length;
+              const isCompleted = solvedCount >= ch.requiredProblemsToUnlockNext;
+              const isShaking = lockedShakeId === ch.id;
+              const isHovered = hoveredGate === ch.id;
 
-        {/* Interactive Topic Gates Hotspots */}
-        <div className="dungeon-gates-layer">
-          {DUNGEON_CHAPTERS.map((ch) => {
-            const isUnlocked = unlockedChapterIds.includes(ch.id);
-            const solvedCount = ch.problems.filter(p => solvedProblemIds.includes(p.id)).length;
-            const isCompleted = solvedCount >= ch.requiredProblemsToUnlockNext;
-            const isShaking = lockedShakeId === ch.id;
-            const isHovered = hoveredGate === ch.id;
-
-            return (
-              <div
-                key={ch.id}
-                className={`dungeon-gate-anchor gate-${ch.id} ${isUnlocked ? 'is-unlocked' : 'is-locked'} ${isCompleted ? 'is-completed' : ''} ${isShaking ? 'is-shaking' : ''}`}
-                style={{ left: `${ch.gateCoords.left}%`, top: `${ch.gateCoords.top}%` }}
-                onMouseEnter={() => setHoveredGate(ch.id)}
-                onMouseLeave={() => setHoveredGate(null)}
-                onClick={() => handleGateClick(ch)}
-              >
-                {/* Gate Aura Glow */}
-                <div className={`gate-aura-ring ${isUnlocked ? 'aura-glow' : ''}`} />
-
-                {/* Gate Interactive Click Trigger */}
-                <button
-                  className="gate-interactive-trigger"
-                  aria-label={`Chapter ${ch.id}: ${ch.name} (${isUnlocked ? 'Unlocked' : 'Locked'})`}
+              return (
+                <div
+                  key={ch.id}
+                  className={`dungeon-gate-anchor gate-${ch.id} ${isUnlocked ? 'is-unlocked' : 'is-locked'} ${isCompleted ? 'is-completed' : ''} ${isShaking ? 'is-shaking' : ''}`}
+                  style={{ left: `${ch.gateCoords.left}%`, top: `${ch.gateCoords.top}%` }}
+                  onMouseEnter={() => setHoveredGate(ch.id)}
+                  onMouseLeave={() => setHoveredGate(null)}
+                  onClick={() => handleGateClick(ch)}
                 >
-                  {/* Gate 1 dynamic progress badge (sits cleanly over the pedestal, no clumsy boxes) */}
-                  {ch.id === 1 && (
-                    <div className="gate-pedestal-dynamic-tag">
-                      <span className="tag-count">{solvedCount} / {ch.problems.length}</span>
+                  {/* Gate Aura Glow */}
+                  <div className={`gate-aura-ring ${isUnlocked ? 'aura-glow' : ''}`} />
+
+                  {/* Gate Interactive Click Trigger */}
+                  <button
+                    className="gate-interactive-trigger"
+                    aria-label={`Chapter ${ch.id}: ${ch.name} (${isUnlocked ? 'Unlocked' : 'Locked'})`}
+                  >
+                    {/* Gate 1 dynamic progress badge over the progress track */}
+                    {ch.id === 1 && (
+                      <div className="gate-pedestal-dynamic-tag" title={`${solvedCount} of ${ch.problems.length} solved`}>
+                        <span className="tag-count">{solvedCount} / {ch.problems.length}</span>
+                      </div>
+                    )}
+                  </button>
+
+                  {/* Hover Popover Tooltip */}
+                  {isHovered && (
+                    <div className="gate-hover-tooltip" role="tooltip">
+                      <div className="tooltip-top-row">
+                        <span className="tooltip-ch-pill">CHAPTER {ch.id}</span>
+                        <span className={`tooltip-status-pill ${isCompleted ? 'completed' : isUnlocked ? 'active' : 'locked'}`}>
+                          {isCompleted ? '✓ Completed' : isUnlocked ? '● Available' : '🔒 Locked'}
+                        </span>
+                      </div>
+                      <h4>{ch.name}</h4>
+                      <p>{ch.description}</p>
+                      <div className="tooltip-meta-row">
+                        <span><strong>{solvedCount}</strong> of {ch.problems.length} Solved</span>
+                        <span className="tooltip-xp-bounty">+{ch.xpReward} XP</span>
+                      </div>
+                      <div className="tooltip-action-cta">
+                        {isUnlocked ? (
+                          <span>Enter Dungeon Gate →</span>
+                        ) : (
+                          <span>Solve Chapter {ch.id - 1} to unlock</span>
+                        )}
+                      </div>
                     </div>
                   )}
-                </button>
-
-                {/* Hover Popover Tooltip */}
-                {isHovered && (
-                  <div className="gate-hover-tooltip" role="tooltip">
-                    <div className="tooltip-top-row">
-                      <span className="tooltip-ch-pill">CHAPTER {ch.id}</span>
-                      <span className={`tooltip-status-pill ${isCompleted ? 'completed' : isUnlocked ? 'active' : 'locked'}`}>
-                        {isCompleted ? '✓ Completed' : isUnlocked ? '● Available' : '🔒 Locked'}
-                      </span>
-                    </div>
-                    <h4>{ch.name}</h4>
-                    <p>{ch.description}</p>
-                    <div className="tooltip-meta-row">
-                      <span><strong>{solvedCount}</strong> of {ch.problems.length} Solved</span>
-                      <span className="tooltip-xp-bounty">+{ch.xpReward} XP</span>
-                    </div>
-                    <div className="tooltip-action-cta">
-                      {isUnlocked ? (
-                        <span>Enter Dungeon Gate →</span>
-                      ) : (
-                        <span>Solve Chapter {ch.id - 1} to unlock</span>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-
-          {/* Master Portal Beacon at Top */}
-          <div
-            className="dungeon-master-portal-anchor"
-            style={{ left: '51.0%', top: '16.0%' }}
-            onClick={() => {
-              if (completedChaptersCount >= 5) {
-                onOpenChapter(6);
-              } else {
-                triggerToast('⚡ The Master Portal unlocks once you conquer Chapters 1 through 5!');
-              }
-            }}
-            title="The Grandmaster DSA Portal"
-          >
-            <div className="master-portal-glow" />
-            <div className="master-portal-code-symbol">&lt;/&gt;</div>
+                </div>
+              );
+            })}
           </div>
-        </div>
 
-        {/* Bottom Prominent Continue Quest Button */}
-        <div className="dungeon-bottom-action-bar">
-          <button className="btn-continue-quest-glow" onClick={onContinueQuest}>
-            <Play size={18} fill="currentColor" />
-            <span>Continue Quest</span>
-          </button>
+          {/* Bottom Prominent Continue Quest Button */}
+          <div className="dungeon-bottom-action-bar">
+            <button className="btn-continue-quest-glow" onClick={onContinueQuest}>
+              <Play size={17} fill="currentColor" />
+              <span>Continue Quest</span>
+            </button>
+          </div>
         </div>
       </div>
 
