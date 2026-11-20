@@ -51,11 +51,11 @@ export default function DungeonHub({
 
   return (
     <div className="dungeon-hub-experience">
-      {/* Background artwork canvas (792x525 cavern, locked aspect ratio so NOTHING is clipped!) */}
+      {/* Background artwork canvas (792x573 cavern, locked aspect ratio so NOTHING is clipped!) */}
       <div className={`dungeon-canvas-viewport ${isTraveling ? 'is-traveling-to-gate' : ''}`}>
         <div className="dungeon-art-stage">
           <img
-            src="/dungeon-cavern-clean.jpg"
+            src="/dungeon-cavern-full.jpg"
             alt="Teklozy DSA Dungeon Realm"
             className="dungeon-artwork-bg"
           />
