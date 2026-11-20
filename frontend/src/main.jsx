@@ -32,8 +32,8 @@ function AppContent() {
     return <AuthPage />;
   }
 
-  // Full-width distraction-free studio for Lesson, Path Details, Stage 2, Level 1, Streak, and DSA Dungeon
-  const isStudioMode = routePath === 'lesson' || routePath.startsWith('path/') || routePath === 'dungeon' || routePath === 'tunnel/dsa' || routePath === 'discover' || routePath === 'level/1' || routePath === 'stage2' || routePath === 'level/2' || routePath === 'streak';
+  // Full-width distraction-free studio for Lesson, Stage 2, Level 1, and DSA Dungeon
+  const isStudioMode = routePath === 'lesson' || routePath === 'dungeon' || routePath === 'tunnel/dsa' || routePath === 'discover' || routePath === 'level/1' || routePath === 'stage2' || routePath === 'level/2';
 
   const renderActiveScreen = () => {
     if (routePath === 'home') return <HomePage />;

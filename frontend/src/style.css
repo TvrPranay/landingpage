@@ -143,6 +143,12 @@ h1, h2, h3, h4, h5, h6 {
   overflow: hidden;
 }
 
+.teklozy-app-shell.studio-mode .teklozy-main-viewport {
+  height: calc(100vh - var(--topbar-height));
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
 .teklozy-layout-body {
   display: flex;
   flex: 1;
@@ -157,6 +163,7 @@ h1, h2, h3, h4, h5, h6 {
   max-width: 1440px;
   margin: 0 auto;
   width: 100%;
+  overflow-y: auto;
 }
 
 .teklozy-main-viewport.viewport-fullwidth {
@@ -2986,7 +2993,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .path-details-hero-card {
   border-radius: var(--radius-2xl);
-  padding: 38px 44px;
+  padding: 26px 36px;
   color: #ffffff;
   display: flex;
   align-items: center;

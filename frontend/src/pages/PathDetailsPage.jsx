@@ -28,7 +28,7 @@ export default function PathDetailsPage() {
       <div className="page-breadcrumb-header">
         <button className="back-nav-btn" onClick={() => navigate('home')}>
           <ChevronLeft size={16} />
-          <span>Dashboard</span>
+          <span>Home</span>
         </button>
         <span className="breadcrumb-divider">/</span>
         <button className="breadcrumb-link-btn" onClick={() => navigate('discover')}>
