@@ -13,8 +13,10 @@ import GenericPage from './pages/GenericPage';
 import CodeLabPage from './pages/CodeLabPage';
 import DungeonPage from './pages/DungeonPage';
 import Stage2Page from './pages/Stage2Page';
+import LevelOnePage from './pages/LevelOnePage';
 import HackathonPage from './pages/HackathonPage';
 import ClubsPage from './pages/ClubsPage';
+import StreakPage from './pages/StreakPage';
 import { CheckCircle2 } from 'lucide-react';
 import './styles/tokens.css';
 import './styles/redesign.css';
@@ -30,14 +32,16 @@ function AppContent() {
     return <AuthPage />;
   }
 
-  // Full-width distraction-free studio for Lesson, Path Details, Stage 2, and DSA Dungeon
-  const isStudioMode = routePath === 'lesson' || routePath.startsWith('path/') || routePath === 'dungeon' || routePath === 'tunnel/dsa';
+  // Full-width distraction-free studio for Lesson, Path Details, Stage 2, Level 1, Streak, and DSA Dungeon
+  const isStudioMode = routePath === 'lesson' || routePath.startsWith('path/') || routePath === 'dungeon' || routePath === 'tunnel/dsa' || routePath === 'discover' || routePath === 'level/1' || routePath === 'stage2' || routePath === 'level/2' || routePath === 'streak';
 
   const renderActiveScreen = () => {
     if (routePath === 'home') return <HomePage />;
-    if (routePath === 'discover') return <PathSelectionPage />;
+    if (routePath === 'discover' || routePath === 'level/1') return <LevelOnePage />;
+    if (routePath === 'paths') return <PathSelectionPage />;
     if (routePath.startsWith('path/')) return <PathDetailsPage />;
-    if (routePath === 'stage2') return <Stage2Page />;
+    if (routePath === 'stage2' || routePath === 'level/2') return <Stage2Page />;
+    if (routePath === 'streak') return <StreakPage />;
     if (routePath === 'lesson') return <LessonPage />;
     if (routePath.startsWith('level/')) return <GenericPage type="level" />;
     if (routePath === 'dungeon' || routePath === 'tunnel/dsa') return <DungeonPage />;

@@ -193,8 +193,7 @@ export default function HomePage() {
         )}
       </section>
 
-      <aside className="hm-rail" aria-label="Streak and side quests">
-        <HomeStreak />
+      <aside className="hm-rail" aria-label="Journey progress and side quests">
         <JourneyProgressBar milestones={milestones} onSelect={select} compact />
         <SideQuests />
       </aside>

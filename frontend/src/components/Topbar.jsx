@@ -47,11 +47,10 @@ export default function Topbar() {
     if (path === 'home') {
       return [];
     }
-    if (path === 'discover') {
+    if (path === 'discover' || path === 'level/1') {
       return [
         { label: 'Home', route: 'home' },
-        { label: 'Level 1: Discover', route: 'level/1' },
-        { label: 'Career Path Selection', active: true }
+        { label: 'Level 1: Discover', active: true }
       ];
     }
     if (path.startsWith('path/')) {
@@ -116,6 +115,12 @@ export default function Topbar() {
         { label: 'Student Clubs & Chapters', active: true }
       ];
     }
+    if (path === 'streak') {
+      return [
+        { label: 'Home', route: 'home' },
+        { label: 'Streak & Consistency', active: true }
+      ];
+    }
     if (path === 'learn') {
       return [{ label: 'Home', route: 'home' }, { label: 'Learning Space', active: true }];
     }
@@ -169,11 +174,11 @@ export default function Topbar() {
 
       {/* Right stats & profile actions */}
       <div className="topbar-actions-area">
-        {/* Streak Pill - Clickable to open dedicated Streak Dashboard */}
+        {/* Streak Pill - Clickable to open dedicated Streak Page */}
         <button
           className="stat-badge-pill streak-pill clickable-pill"
-          onClick={() => setStreakModalOpen(true)}
-          title="Click to view Streak Dashboard & Activity Heatmap"
+          onClick={() => navigate('streak')}
+          title="Click to view full Streak Dashboard & Activity Heatmap"
         >
           <Flame size={15} className="streak-icon" />
           <span className="pill-text">12 Day Streak</span>

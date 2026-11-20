@@ -245,6 +245,66 @@ def codelab_mentor(payload: MentorQueryRequest):
     return response
 
 
+@app.get("/api/v1/streaks/me")
+def streaks_me():
+    today = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+    week = []
+    for i, w in enumerate(weekdays):
+        week.append({
+            "date": f"2026-11-{17+i:02d}",
+            "weekday": w,
+            "done": i < 3,
+            "isToday": i == 2,
+            "isFuture": i > 2
+        })
+    return {
+        "data": {
+            "timezone": "UTC",
+            "today": today,
+            "currentDays": 12,
+            "longestDays": 14,
+            "todayDone": True,
+            "atRisk": False,
+            "lastActiveDay": today,
+            "week": week,
+            "message": "Keep the momentum! Learn daily, practice and build consistently."
+        }
+    }
+
+
+@app.get("/api/v1/tunnels")
+def get_tunnels():
+    return {
+        "data": {
+            "items": [
+                {
+                    "id": "dsa",
+                    "title": "DSA Tunnel",
+                    "purpose": "Master DSA, solve challenges and earn XP.",
+                    "open": True,
+                    "progress": {
+                        "modulesCompleted": 1,
+                        "modulesTotal": 6,
+                        "percent": 17
+                    }
+                },
+                {
+                    "id": "ai",
+                    "title": "AI Tunnel",
+                    "purpose": "Explore and build with artificial intelligence.",
+                    "open": True,
+                    "progress": {
+                        "modulesCompleted": 0,
+                        "modulesTotal": 4,
+                        "percent": 0
+                    }
+                }
+            ]
+        }
+    }
+
+
 @app.post("/api/codelab/save")
 def codelab_save(payload: SaveProjectRequest):
     """Saves student code file to database."""
