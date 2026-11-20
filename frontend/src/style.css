@@ -13608,9 +13608,11 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 
+
+
 /* ==========================================================================
-   FULLSCREEN JOURNEY MAP & FLOATING SIDE QUESTS (Teklozy Home)
-   Fills the entire screen with zero right-side whitespace
+   TEKLOZY HOME — 4K FULLSCREEN MAP & DIRECT IMAGE-OVERLAY SIDE QUESTS
+   Zero white spaces, pristine typography, modern list view
    ========================================================================== */
 
 .teklozy-main-viewport.viewport-home {
@@ -13618,8 +13620,8 @@ h1, h2, h3, h4, h5, h6 {
   width: 100% !important;
   padding: 0 !important;
   margin: 0 !important;
-  height: calc(100vh - var(--topbar-height)) !important;
-  max-height: calc(100vh - var(--topbar-height)) !important;
+  height: calc(100vh - var(--topbar-height, 64px)) !important;
+  max-height: calc(100vh - var(--topbar-height, 64px)) !important;
   overflow: hidden !important;
   display: flex !important;
   flex-direction: column !important;
@@ -13644,7 +13646,7 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: none !important;
   position: relative !important;
   overflow: hidden !important;
-  background: #bce1ff !important;
+  background: #a9d9ff !important;
 }
 
 .hm-page.is-fullscreen-map .hm-stage {
@@ -13660,6 +13662,8 @@ h1, h2, h3, h4, h5, h6 {
   inset: 0 !important;
   width: 100% !important;
   height: 100% !important;
+  transform: none !important;
+  transition: none !important;
 }
 
 .hm-page.is-fullscreen-map .hm-art {
@@ -13668,46 +13672,84 @@ h1, h2, h3, h4, h5, h6 {
   object-fit: cover !important;
   object-position: center bottom !important;
   display: block !important;
+  image-rendering: -webkit-optimize-contrast !important;
 }
 
-/* Floating Heading over the Map in Top-Left */
+/* Heading: Sits directly on the sky with no ugly white box */
 .hm-page.is-fullscreen-map .hm-heading {
   position: absolute !important;
   top: 24px !important;
   left: 28px !important;
   z-index: 10 !important;
-  background: rgba(255, 255, 255, 0.88) !important;
-  backdrop-filter: blur(14px) !important;
-  padding: 20px 24px !important;
-  border-radius: 20px !important;
-  border: 1px solid rgba(255, 255, 255, 0.9) !important;
-  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08), 0 2px 6px rgba(15, 23, 42, 0.04) !important;
-  max-width: 380px !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  max-width: 460px !important;
 }
 
 .hm-page.is-fullscreen-map .hm-kicker {
   font-size: 11px !important;
   font-weight: 800 !important;
-  letter-spacing: 0.08em !important;
-  color: #0284c7 !important;
+  letter-spacing: 0.1em !important;
+  color: #0369a1 !important;
   text-transform: uppercase !important;
+  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.9) !important;
 }
 
 .hm-page.is-fullscreen-map .hm-heading h1 {
-  font-size: 26px !important;
+  font-size: 32px !important;
   font-weight: 800 !important;
   color: #0f172a !important;
-  line-height: 1.15 !important;
-  margin: 4px 0 6px 0 !important;
+  line-height: 1.12 !important;
+  letter-spacing: -0.03em !important;
+  margin: 4px 0 8px 0 !important;
+  text-shadow: 0 1px 4px rgba(255, 255, 255, 0.95), 0 2px 8px rgba(255, 255, 255, 0.6) !important;
+}
+
+.hm-page.is-fullscreen-map .hm-heading h1 em {
+  font-style: normal !important;
+  color: #0076f5 !important;
+  background: none !important;
+  -webkit-text-fill-color: initial !important;
 }
 
 .hm-page.is-fullscreen-map .hm-heading p {
-  font-size: 13px !important;
-  color: #475569 !important;
-  line-height: 1.4 !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  color: #1e293b !important;
+  line-height: 1.45 !important;
+  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.9) !important;
 }
 
-/* Floating Side Quests in Top-Right */
+.hm-page.is-fullscreen-map .hm-toggle {
+  background: rgba(255, 255, 255, 0.94) !important;
+  backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(226, 232, 240, 0.9) !important;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08) !important;
+  padding: 4px !important;
+  border-radius: 9999px !important;
+  margin-top: 14px !important;
+  display: inline-flex !important;
+  gap: 4px !important;
+}
+
+.hm-page.is-fullscreen-map .hm-toggle button {
+  padding: 7px 16px !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  border-radius: 9999px !important;
+  color: #334155 !important;
+  transition: all 0.15s ease !important;
+}
+
+.hm-page.is-fullscreen-map .hm-toggle button.is-active {
+  background: #0076f5 !important;
+  color: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(0, 118, 245, 0.35) !important;
+}
+
+/* Side Quests: Sits directly ON THE IMAGE with ZERO white spaces */
 .hm-floating-sidequests {
   position: absolute !important;
   top: 24px !important;
@@ -13715,52 +13757,70 @@ h1, h2, h3, h4, h5, h6 {
   width: 320px !important;
   z-index: 10 !important;
   pointer-events: auto !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
 }
 
 .hm-floating-sidequests .sq-card {
-  background: rgba(255, 255, 255, 0.92) !important;
-  backdrop-filter: blur(16px) !important;
-  border: 1.5px solid rgba(255, 255, 255, 0.95) !important;
-  border-radius: 20px !important;
-  padding: 18px !important;
-  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12), 0 4px 10px rgba(15, 23, 42, 0.06) !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+.hm-floating-sidequests .rail-card__head {
+  padding: 0 4px 10px 4px !important;
+  border-bottom: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  background: transparent !important;
 }
 
 .hm-floating-sidequests .rail-card__head h2 {
-  font-size: 16px !important;
+  font-size: 15px !important;
   font-weight: 800 !important;
   color: #0f172a !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: 8px !important;
+  letter-spacing: -0.01em !important;
+  text-shadow: 0 1px 4px rgba(255, 255, 255, 0.95), 0 0 10px rgba(255, 255, 255, 0.8) !important;
 }
 
 .hm-floating-sidequests .sq-list {
   display: flex !important;
   flex-direction: column !important;
   gap: 12px !important;
-  margin-top: 12px !important;
+  background: transparent !important;
 }
 
 .hm-floating-sidequests .sq-quest {
+  margin: 0 !important;
   padding: 12px 14px !important;
-  border-radius: 14px !important;
+  border-radius: 16px !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.25) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
   gap: 12px !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12) !important;
+  backdrop-filter: blur(14px) !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+.hm-floating-sidequests .sq-quest:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35) !important;
 }
 
 .hm-floating-sidequests .sq-quest--dsa {
-  background: linear-gradient(135deg, #241442 0%, #150d2a 100%) !important;
-  border-color: rgba(245, 158, 11, 0.35) !important;
+  background: linear-gradient(135deg, rgba(34, 18, 62, 0.94) 0%, rgba(18, 10, 36, 0.96) 100%) !important;
+  border-color: rgba(245, 158, 11, 0.45) !important;
 }
 
 .hm-floating-sidequests .sq-quest--ai {
-  background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%) !important;
-  border-color: rgba(99, 102, 241, 0.35) !important;
+  background: linear-gradient(135deg, rgba(22, 26, 72, 0.94) 0%, rgba(12, 16, 44, 0.96) 100%) !important;
+  border-color: rgba(99, 102, 241, 0.45) !important;
 }
 
 .hm-floating-sidequests .sq-quest h3 {
@@ -13810,4 +13870,267 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 12px !important;
   object-fit: cover !important;
   flex-shrink: 0 !important;
+}
+
+/* ==========================================================================
+   LIST VIEW — CLEAN, SPACIOUS, ENTERPRISE ROADMAP
+   ========================================================================== */
+
+.hm-page.is-list-view {
+  display: block !important;
+  width: 100% !important;
+  height: calc(100vh - var(--topbar-height, 64px)) !important;
+  overflow-y: auto !important;
+  background: #f8fafc !important;
+}
+
+.hm-listwrap {
+  max-width: 860px !important;
+  margin: 0 auto !important;
+  padding: 32px 24px 64px !important;
+}
+
+.hm-listwrap-top {
+  margin-bottom: 24px !important;
+}
+
+.hm-listwrap-top .hm-heading {
+  position: static !important;
+  max-width: none !important;
+}
+
+.pro-level-list-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.pro-level-list-header {
+  margin-bottom: 8px;
+}
+
+.pro-list-kicker {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #0284c7;
+  text-transform: uppercase;
+}
+
+.pro-list-heading {
+  font-size: 24px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 2px 0 6px 0;
+}
+
+.pro-list-subtext {
+  font-size: 13px;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.45;
+}
+
+.pro-level-items-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pro-level-card {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 16px 20px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+.pro-level-card:hover {
+  transform: translateY(-2px);
+  border-color: #93c5fd;
+  box-shadow: 0 8px 20px rgba(0, 118, 245, 0.08);
+}
+
+.pro-level-card.is-current {
+  border: 2px solid #0076f5;
+  background: #f8fbff;
+  box-shadow: 0 4px 16px rgba(0, 118, 245, 0.12);
+}
+
+.pro-level-card.is-locked {
+  opacity: 0.85;
+  background: #f8fafc;
+}
+
+.pro-level-card-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+  min-width: 0;
+}
+
+.pro-level-num-badge {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.pro-level-num-badge.is-completed {
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+}
+
+.pro-level-num-badge.is-current {
+  background: #eff6ff;
+  color: #0076f5;
+  border: 1.5px solid #bfdbfe;
+}
+
+.pro-level-num-badge.is-locked {
+  background: #f1f5f9;
+  color: #94a3b8;
+  border: 1px solid #e2e8f0;
+}
+
+.pro-level-num-badge.is-available {
+  background: #f8fafc;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+}
+
+.pro-level-tile-art {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.pro-level-card-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.pro-level-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+.pro-level-tag {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #64748b;
+  text-transform: uppercase;
+}
+
+.pro-current-pulse-badge {
+  font-size: 10px;
+  font-weight: 700;
+  background: #dbeafe;
+  color: #1d4ed8;
+  padding: 2px 8px;
+  border-radius: 9999px;
+}
+
+.pro-level-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 2px 0;
+}
+
+.pro-level-desc {
+  font-size: 12px;
+  color: #64748b;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pro-level-card-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.pro-level-xp-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  color: #b45309;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 9999px;
+}
+
+.pro-level-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.pro-level-status-pill.is-completed {
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid #a7f3d0;
+}
+
+.pro-level-status-pill.is-current {
+  background: #eff6ff;
+  color: #0076f5;
+  border: 1px solid #bfdbfe;
+}
+
+.pro-level-status-pill.is-locked {
+  background: #f1f5f9;
+  color: #94a3b8;
+  border: 1px solid #e2e8f0;
+}
+
+.pro-level-status-pill.is-available {
+  background: #f8fafc;
+  color: #475569;
+  border: 1px solid #cbd5e1;
+}
+
+.pro-level-chevron {
+  color: #94a3b8;
+  transition: transform 0.15s ease;
+}
+
+.pro-level-card:hover .pro-level-chevron {
+  transform: translateX(2px);
+  color: #0076f5;
 }
