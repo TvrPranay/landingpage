@@ -98,30 +98,38 @@ export function SideQuests({ from }) {
   const items = TUNNEL_PREVIEWS.map((preview) => ({ ...preview, ...(data?.items?.find((item) => item.id === preview.id) ?? {}) }));
   const origin = from ?? (currentRoute.path === 'home' ? 'home' : 'stage2');
   return (
-    <section className="rail-card sq-card" aria-labelledby="sq-title">
-      <header className="rail-card__head">
-        <h2 id="sq-title">Side quests</h2>
-      </header>
+    <section className="sq-hanging-container" aria-label="Side quests">
       {error && <ErrorState message={error} onRetry={reload} />}
-      <div className="sq-list" aria-busy={loading}>
+      <div className="sq-hanging-list" aria-busy={loading}>
         {items.map((tunnel) => {
           const status = questStatus(tunnel);
           return (
-            <article key={tunnel.id} className={`sq-quest sq-quest--${tunnel.id} ${status.locked ? 'is-locked' : ''}`}>
-              <div className="sq-quest__copy">
-                <h3>{tunnel.title} <span>(Quest)</span></h3>
-                <p>{status.text}</p>
-                {status.percent > 0 && (
-                  <span className="sq-quest__bar" role="progressbar" aria-label={`${tunnel.title} progress`} aria-valuenow={status.percent} aria-valuemin={0} aria-valuemax={100}>
-                    <span style={{ width: `${status.percent}%` }} />
-                  </span>
-                )}
-                <button type="button" className="sq-quest__btn" onClick={() => navigate(`tunnel/${tunnel.id}`, { from: origin })}>
-                  {status.locked ? <><Lock size={15} /> View quest</> : <>Enter Quest <ArrowRight size={16} /></>}
-                </button>
+            <div key={tunnel.id} className="sq-hanging-wrapper">
+              {/* Hanging Mount Rig (Cords + Brass Rivets) */}
+              <div className="sq-hanging-mount" aria-hidden="true">
+                <span className="sq-hanging-pin sq-hanging-pin--left" />
+                <span className="sq-hanging-cord sq-hanging-cord--left" />
+                <span className="sq-hanging-pin sq-hanging-pin--right" />
+                <span className="sq-hanging-cord sq-hanging-cord--right" />
               </div>
-              <img className="sq-quest__art" src={`/illustrations/quest-${tunnel.id}.png`} alt="" />
-            </article>
+
+              {/* Hanging Banner Plaque */}
+              <article className={`sq-quest sq-quest--${tunnel.id} ${status.locked ? 'is-locked' : ''}`}>
+                <div className="sq-quest__copy">
+                  <h3>{tunnel.title} <span>(Quest)</span></h3>
+                  <p>{status.text}</p>
+                  {status.percent > 0 && (
+                    <span className="sq-quest__bar" role="progressbar" aria-label={`${tunnel.title} progress`} aria-valuenow={status.percent} aria-valuemin={0} aria-valuemax={100}>
+                      <span style={{ width: `${status.percent}%` }} />
+                    </span>
+                  )}
+                  <button type="button" className="sq-quest__btn" onClick={() => navigate(`tunnel/${tunnel.id}`, { from: origin })}>
+                    {status.locked ? <><Lock size={14} /> View quest</> : <>Enter Quest <ArrowRight size={15} /></>}
+                  </button>
+                </div>
+                <img className="sq-quest__art" src={`/illustrations/quest-${tunnel.id}.png`} alt="" />
+              </article>
+            </div>
           );
         })}
       </div>

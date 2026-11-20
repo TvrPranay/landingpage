@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Map as MapIcon, List, MapPin, Check, Lock } from 'lucide-react';
+import { Map as MapIcon, List, MapPin, Check } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import LevelListView from '../components/journey/LevelListView';
 import LockedLevelModal from '../components/journey/LockedLevelModal';
@@ -9,7 +9,7 @@ import { preloadStageScenes } from '../components/stage/StageScene';
 
 const VIEW_KEY = 'teklozyJourneyView';
 
-/** A clean, responsive hotspot over a badge painted into the 4K map */
+/** Clean, transparent interactive hotspot over each painted pedestal */
 function MapHotspot({ milestone, position, onSelect, onHover, shaking }) {
   const st = milestone.status;
   return (
@@ -32,13 +32,8 @@ function MapHotspot({ milestone, position, onSelect, onHover, shaking }) {
         </span>
       )}
       {st === 'completed' && (
-        <span className="hm-hot__state is-done" aria-hidden="true">
-          <Check strokeWidth={3.4} />
-        </span>
-      )}
-      {st === 'locked' && (
-        <span className="hm-hot__state is-locked" aria-hidden="true">
-          <Lock strokeWidth={2.6} />
+        <span className="hm-hot__check-subtle" aria-hidden="true">
+          <Check strokeWidth={3} size={14} />
         </span>
       )}
     </button>
@@ -46,22 +41,23 @@ function MapHotspot({ milestone, position, onSelect, onHover, shaking }) {
 }
 
 /**
- * The 4K Home journey map (3840x3025). 
- * Coordinates match the original painted pedestals from Torii gate to summit temple.
+ * 4K Journey Map Artwork (3840 x 2193)
+ * Exact center coordinates aligned with the 10 pedestals/badges on the clean artwork.
+ * Level 4 (Start Building) & Level 5 (Advanced Building) placed on their corresponding pedestals.
  */
 const MOUNTAIN_MAP = {
-  image: '/illustrations/journey-map-4k.jpg',
+  image: '/illustrations/journey-map-clean-4k.jpg',
   markers: {
-    1: { x: 12.5, y: 85.5 }, // Discover
-    2: { x: 31.5, y: 79.3 }, // Learn Basics
-    3: { x: 54.5, y: 81.8 }, // Learn Advanced
-    4: { x: 65.4, y: 60.2 }, // Level 4 (swapped with 5)
-    5: { x: 79.3, y: 70.3 }, // Level 5 (swapped with 4)
-    6: { x: 43.9, y: 54.8 }, // Advanced Building
-    7: { x: 53.8, y: 40.4 }, // Interview Prep
-    8: { x: 73.8, y: 36.7 }, // Apply
-    9: { x: 88.7, y: 29.5 }, // Premium
-    10: { x: 69.5, y: 18.8 }, // Alumni Connect
+    1: { x: 23.24, y: 84.1 },   // Discover
+    2: { x: 27.15, y: 72.14 },  // Learn Basics
+    3: { x: 38.57, y: 64.44 },  // Learn Advanced
+    4: { x: 61.91, y: 66.67 },  // Start Building (swapped as requested)
+    5: { x: 49.32, y: 60.68 },  // Advanced Building (swapped as requested)
+    6: { x: 41.5, y: 48.72 },   // Networking
+    7: { x: 63.96, y: 50.94 },  // Interview Prep
+    8: { x: 50.78, y: 39.32 },  // Apply
+    9: { x: 59.77, y: 32.82 },  // Premium
+    10: { x: 66.11, y: 32.48 }, // Alumni Connect
   },
 };
 
@@ -172,10 +168,10 @@ export default function HomePage() {
                 />
               ))}
 
-              {/* Clean Lightweight Tooltip */}
+              {/* Clean Floating Tooltip on Hover */}
               {hover && (
                 <div
-                  className={`hm-tip ${MOUNTAIN_MAP.markers[hover.level].x > 70 ? 'is-left' : ''}`}
+                  className={`hm-tip ${MOUNTAIN_MAP.markers[hover.level].x > 65 ? 'is-left' : ''}`}
                   style={{
                     left: `${MOUNTAIN_MAP.markers[hover.level].x}%`,
                     top: `${MOUNTAIN_MAP.markers[hover.level].y}%`,
@@ -188,16 +184,16 @@ export default function HomePage() {
                     {hover.status === 'locked'
                       ? unlockRequirement(milestones, hover.level)
                       : hover.status === 'completed'
-                      ? 'Completed — select to review'
+                      ? 'Completed — click to review'
                       : hover.status === 'available'
-                      ? 'Open — select to visit'
-                      : 'In progress — select to continue'}
+                      ? 'Open — click to visit'
+                      : 'In progress — click to continue'}
                   </span>
                 </div>
               )}
             </div>
 
-            {/* Side Quests sitting directly on the image with zero white background */}
+            {/* Side Quests Floating directly on the image with ZERO white space */}
             <aside className="hm-floating-sidequests" aria-label="Side Quests">
               <SideQuests />
             </aside>
@@ -205,9 +201,7 @@ export default function HomePage() {
         </section>
       ) : (
         <div className="hm-listwrap">
-          <div className="hm-listwrap-top">
-            {heading}
-          </div>
+          <div className="hm-listwrap-top">{heading}</div>
           <LevelListView milestones={milestones} onSelect={select} />
         </div>
       )}

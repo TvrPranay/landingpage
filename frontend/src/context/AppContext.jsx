@@ -52,11 +52,11 @@ export const LEVEL_MILESTONES = [
   { level: 2, name: 'Learn Basics', desc: 'Build foundational programming and algorithmic reasoning skills.', status: 'current' },
   { level: 3, name: 'Learn Advanced', desc: 'Deep-dive into architecture, systems design and performance optimization.', status: 'locked' },
   { level: 4, name: 'Start Building', desc: 'Craft real-world, production-ready portfolio software applications.', status: 'locked' },
-  { level: 5, name: 'Networking', desc: 'Connect with mentors, industry professionals, and peer study cohorts.', status: 'locked' },
-  { level: 6, name: 'Showcase', desc: 'Publish open-source code and present projects to hiring partners.', status: 'locked' },
+  { level: 5, name: 'Advanced Building', desc: 'Ship larger, production-grade applications and systems.', status: 'locked' },
+  { level: 6, name: 'Networking', desc: 'Connect with mentors, industry professionals, and peer study cohorts.', status: 'locked' },
   { level: 7, name: 'Interview Prep', desc: 'Master technical whiteboard problems and behavioral interview cases.', status: 'locked' },
-  { level: 8, name: 'Apply & Match', desc: 'Target curated high-growth roles aligned with your verified competencies.', status: 'locked' },
-  { level: 9, name: 'Premium Access', desc: 'Access elite mentor coaching, salary benchmarking and 1-on-1 reviews.', status: 'locked' },
+  { level: 8, name: 'Apply', desc: 'Target curated high-growth roles aligned with your verified competencies.', status: 'locked' },
+  { level: 9, name: 'Premium', desc: 'Access elite mentor coaching, salary benchmarking and 1-on-1 reviews.', status: 'locked' },
   { level: 10, name: 'Alumni Connect', desc: 'Join the alumni network, mentor junior learners, and accelerate growth.', status: 'locked' }
 ];
 
