@@ -13606,3 +13606,208 @@ h1, h2, h3, h4, h5, h6 {
     justify-content: center;
   }
 }
+
+
+/* ==========================================================================
+   FULLSCREEN JOURNEY MAP & FLOATING SIDE QUESTS (Teklozy Home)
+   Fills the entire screen with zero right-side whitespace
+   ========================================================================== */
+
+.teklozy-main-viewport.viewport-home {
+  max-width: 100% !important;
+  width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  height: calc(100vh - var(--topbar-height)) !important;
+  max-height: calc(100vh - var(--topbar-height)) !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.hm-page.is-fullscreen-map {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  position: relative !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.hm-page.is-fullscreen-map .hm-map-card {
+  width: 100% !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  position: relative !important;
+  overflow: hidden !important;
+  background: #bce1ff !important;
+}
+
+.hm-page.is-fullscreen-map .hm-stage {
+  width: 100% !important;
+  height: 100% !important;
+  position: relative !important;
+  overflow: hidden !important;
+  aspect-ratio: auto !important;
+}
+
+.hm-page.is-fullscreen-map .hm-world {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.hm-page.is-fullscreen-map .hm-art {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: center bottom !important;
+  display: block !important;
+}
+
+/* Floating Heading over the Map in Top-Left */
+.hm-page.is-fullscreen-map .hm-heading {
+  position: absolute !important;
+  top: 24px !important;
+  left: 28px !important;
+  z-index: 10 !important;
+  background: rgba(255, 255, 255, 0.88) !important;
+  backdrop-filter: blur(14px) !important;
+  padding: 20px 24px !important;
+  border-radius: 20px !important;
+  border: 1px solid rgba(255, 255, 255, 0.9) !important;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08), 0 2px 6px rgba(15, 23, 42, 0.04) !important;
+  max-width: 380px !important;
+}
+
+.hm-page.is-fullscreen-map .hm-kicker {
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.08em !important;
+  color: #0284c7 !important;
+  text-transform: uppercase !important;
+}
+
+.hm-page.is-fullscreen-map .hm-heading h1 {
+  font-size: 26px !important;
+  font-weight: 800 !important;
+  color: #0f172a !important;
+  line-height: 1.15 !important;
+  margin: 4px 0 6px 0 !important;
+}
+
+.hm-page.is-fullscreen-map .hm-heading p {
+  font-size: 13px !important;
+  color: #475569 !important;
+  line-height: 1.4 !important;
+}
+
+/* Floating Side Quests in Top-Right */
+.hm-floating-sidequests {
+  position: absolute !important;
+  top: 24px !important;
+  right: 28px !important;
+  width: 320px !important;
+  z-index: 10 !important;
+  pointer-events: auto !important;
+}
+
+.hm-floating-sidequests .sq-card {
+  background: rgba(255, 255, 255, 0.92) !important;
+  backdrop-filter: blur(16px) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.95) !important;
+  border-radius: 20px !important;
+  padding: 18px !important;
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12), 0 4px 10px rgba(15, 23, 42, 0.06) !important;
+}
+
+.hm-floating-sidequests .rail-card__head h2 {
+  font-size: 16px !important;
+  font-weight: 800 !important;
+  color: #0f172a !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.hm-floating-sidequests .sq-list {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  margin-top: 12px !important;
+}
+
+.hm-floating-sidequests .sq-quest {
+  padding: 12px 14px !important;
+  border-radius: 14px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12) !important;
+}
+
+.hm-floating-sidequests .sq-quest--dsa {
+  background: linear-gradient(135deg, #241442 0%, #150d2a 100%) !important;
+  border-color: rgba(245, 158, 11, 0.35) !important;
+}
+
+.hm-floating-sidequests .sq-quest--ai {
+  background: linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%) !important;
+  border-color: rgba(99, 102, 241, 0.35) !important;
+}
+
+.hm-floating-sidequests .sq-quest h3 {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: #ffffff !important;
+  margin: 0 0 2px 0 !important;
+}
+
+.hm-floating-sidequests .sq-quest h3 span {
+  font-size: 11px !important;
+  color: #94a3b8 !important;
+  font-weight: 500 !important;
+}
+
+.hm-floating-sidequests .sq-quest p {
+  font-size: 11px !important;
+  color: #cbd5e1 !important;
+  margin: 0 0 8px 0 !important;
+  line-height: 1.35 !important;
+}
+
+.hm-floating-sidequests .sq-quest__btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 6px 14px !important;
+  border-radius: 9999px !important;
+  background: #ffffff !important;
+  color: #0f172a !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  border: none !important;
+  cursor: pointer !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+  transition: transform 0.15s ease, background 0.15s ease !important;
+}
+
+.hm-floating-sidequests .sq-quest__btn:hover {
+  transform: translateY(-1px) !important;
+  background: #f8fafc !important;
+}
+
+.hm-floating-sidequests .sq-quest__art {
+  width: 58px !important;
+  height: 58px !important;
+  border-radius: 12px !important;
+  object-fit: cover !important;
+  flex-shrink: 0 !important;
+}

@@ -101,7 +101,6 @@ export function SideQuests({ from }) {
     <section className="rail-card sq-card" aria-labelledby="sq-title">
       <header className="rail-card__head">
         <h2 id="sq-title">Side quests</h2>
-        <span className="sq-optional">Optional</span>
       </header>
       {error && <ErrorState message={error} onRetry={reload} />}
       <div className="sq-list" aria-busy={loading}>

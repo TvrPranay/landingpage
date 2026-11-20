@@ -38,19 +38,19 @@ function MapHotspot({ milestone, position, onSelect, onHover, shaking }) {
  * live hotspots sit exactly on them.
  */
 const MOUNTAIN_MAP = {
-  image: '/illustrations/journey-map-v2.jpg',
+  image: '/illustrations/journey-map-v3.jpg',
   /** Centre of each painted badge, in % of the artwork, following the path from the torii gate to the temple. */
   markers: {
-    1: { x: 12.5, y: 85.5 },
-    2: { x: 31.5, y: 79.3 },
-    3: { x: 54.5, y: 81.8 },
-    4: { x: 79.3, y: 70.3 },
-    5: { x: 65.4, y: 60.2 },
-    6: { x: 43.9, y: 54.8 },
-    7: { x: 53.8, y: 40.4 },
-    8: { x: 73.8, y: 36.7 },
-    9: { x: 88.7, y: 29.5 },
-    10: { x: 69.5, y: 18.8 },
+    1: { x: 23.4, y: 81.2 },
+    2: { x: 27.3, y: 68.4 },
+    3: { x: 38.6, y: 61.5 },
+    4: { x: 62.0, y: 63.2 }, // Swapped 4 and 5 as requested
+    5: { x: 49.3, y: 57.3 }, // Swapped 5 and 4 as requested
+    6: { x: 42.0, y: 45.3 },
+    7: { x: 64.0, y: 47.0 },
+    8: { x: 51.3, y: 36.8 },
+    9: { x: 60.5, y: 31.6 },
+    10: { x: 66.9, y: 31.6 },
   },
 };
 
@@ -144,15 +144,10 @@ export default function HomePage() {
   );
 
   return (
-    <div className="hm-page">
+    <div className={`hm-page ${view === 'list' ? 'is-list-view' : 'is-fullscreen-map'}`}>
       <section className={`hm-map-card ${view === 'list' ? 'is-list' : ''} ${travel ? 'is-leaving' : ''}`} aria-label="Your 10-level journey">
         {view === 'map' && heading}
-        {view === 'map' && (
-          <>
-            <img className="hm-ext is-left" src={MOUNTAIN_MAP.image} alt="" aria-hidden="true" draggable="false" />
-            <img className="hm-ext is-right" src={MOUNTAIN_MAP.image} alt="" aria-hidden="true" draggable="false" />
-          </>
-        )}
+
         {view === 'map' ? (
           <div className={`hm-stage ${travel ? (travel.calm ? 'is-fading' : 'is-flying') : ''}`}>
             <div
@@ -183,6 +178,12 @@ export default function HomePage() {
                 </div>
               )}
             </div>
+
+            {/* Floating Side Quests on Map (DSA Tunnel & AI Tunnel) */}
+            <aside className="hm-floating-sidequests" aria-label="Side Quests">
+              <SideQuests />
+            </aside>
+
             {travel && <div className="hm-travel" aria-live="assertive">Travelling to Level {travel.level}…</div>}
           </div>
         ) : (
@@ -192,11 +193,6 @@ export default function HomePage() {
           </div>
         )}
       </section>
-
-      <aside className="hm-rail" aria-label="Journey progress and side quests">
-        <JourneyProgressBar milestones={milestones} onSelect={select} compact />
-        <SideQuests />
-      </aside>
 
       {locked && (
         <LockedLevelModal milestone={locked} milestones={milestones} onClose={() => setLocked(null)} onGoToCurrent={goToCurrent} />
