@@ -91,48 +91,93 @@ function questStatus(tunnel) {
   return { locked: false, text: tunnel.purpose };
 }
 
-/** DSA and AI tunnels, from `GET tunnels`. Each opens its own route and returns to `from`. */
+/** DSA and AI tunnels, from `GET tunnels`. Connected in a single hanging chain rig. */
 export function SideQuests({ from }) {
   const { navigate, finalizedPathId, currentRoute } = useApp();
   const { data, error, loading, reload } = useAsync(() => api.get('tunnels'), [finalizedPathId]);
   const items = TUNNEL_PREVIEWS.map((preview) => ({ ...preview, ...(data?.items?.find((item) => item.id === preview.id) ?? {}) }));
   const origin = from ?? (currentRoute.path === 'home' ? 'home' : 'stage2');
-  return (
-    <section className="sq-hanging-container" aria-label="Side quests">
-      {error && <ErrorState message={error} onRetry={reload} />}
-      <div className="sq-hanging-list" aria-busy={loading}>
-        {items.map((tunnel) => {
-          const status = questStatus(tunnel);
-          return (
-            <div key={tunnel.id} className="sq-hanging-wrapper">
-              {/* Hanging Mount Rig (Cords + Brass Rivets) */}
-              <div className="sq-hanging-mount" aria-hidden="true">
-                <span className="sq-hanging-pin sq-hanging-pin--left" />
-                <span className="sq-hanging-cord sq-hanging-cord--left" />
-                <span className="sq-hanging-pin sq-hanging-pin--right" />
-                <span className="sq-hanging-cord sq-hanging-cord--right" />
-              </div>
 
-              {/* Hanging Banner Plaque */}
-              <article className={`sq-quest sq-quest--${tunnel.id} ${status.locked ? 'is-locked' : ''}`}>
-                <div className="sq-quest__copy">
-                  <h3>{tunnel.title} <span>(Quest)</span></h3>
-                  <p>{status.text}</p>
-                  {status.percent > 0 && (
-                    <span className="sq-quest__bar" role="progressbar" aria-label={`${tunnel.title} progress`} aria-valuenow={status.percent} aria-valuemin={0} aria-valuemax={100}>
-                      <span style={{ width: `${status.percent}%` }} />
-                    </span>
-                  )}
-                  <button type="button" className="sq-quest__btn" onClick={() => navigate(`tunnel/${tunnel.id}`, { from: origin })}>
-                    {status.locked ? <><Lock size={14} /> View quest</> : <>Enter Quest <ArrowRight size={15} /></>}
-                  </button>
-                </div>
-                <img className="sq-quest__art" src={`/illustrations/quest-${tunnel.id}.png`} alt="" />
-              </article>
-            </div>
-          );
-        })}
+  const dsa = items.find((t) => t.id === 'dsa') || items[0];
+  const ai = items.find((t) => t.id === 'ai') || items[1];
+
+  const dsaStatus = dsa ? questStatus(dsa) : null;
+  const aiStatus = ai ? questStatus(ai) : null;
+
+  return (
+    <section className="sq-chain-rig" aria-label="Side quests">
+      {error && <ErrorState message={error} onRetry={reload} />}
+
+      {/* Top Hanging Mount connecting DSA from top edge */}
+      <div className="sq-top-mount" aria-hidden="true">
+        <span className="sq-anchor-pin sq-anchor-pin--left" />
+        <span className="sq-top-chain sq-top-chain--left" />
+        <span className="sq-anchor-pin sq-anchor-pin--right" />
+        <span className="sq-top-chain sq-top-chain--right" />
       </div>
+
+      {/* 1. Upper Plaque: DSA Tunnel */}
+      {dsa && (
+        <div className="sq-hanging-card sq-hanging-card--dsa">
+          <span className="sq-eyelet sq-eyelet--top-left" aria-hidden="true" />
+          <span className="sq-eyelet sq-eyelet--top-right" aria-hidden="true" />
+
+          <article className={`sq-quest sq-quest--dsa ${dsaStatus?.locked ? 'is-locked' : ''}`}>
+            <div className="sq-quest__copy">
+              <h3>{dsa.title} <span>(Quest)</span></h3>
+              <p>{dsaStatus?.text}</p>
+              {dsaStatus?.percent > 0 && (
+                <span className="sq-quest__bar" role="progressbar" aria-label={`${dsa.title} progress`} aria-valuenow={dsaStatus.percent} aria-valuemin={0} aria-valuemax={100}>
+                  <span style={{ width: `${dsaStatus.percent}%` }} />
+                </span>
+              )}
+              <button type="button" className="sq-quest__btn" onClick={() => navigate(`tunnel/${dsa.id}`, { from: origin })}>
+                {dsaStatus?.locked ? <><Lock size={14} /> View quest</> : <>Enter Quest <ArrowRight size={15} /></>}
+              </button>
+            </div>
+            <img className="sq-quest__art" src={`/illustrations/quest-${dsa.id}.png`} alt="" />
+          </article>
+
+          <span className="sq-eyelet sq-eyelet--bot-left" aria-hidden="true" />
+          <span className="sq-eyelet sq-eyelet--bot-right" aria-hidden="true" />
+        </div>
+      )}
+
+      {/* Connecting Chain Links attaching AI directly to DSA below */}
+      <div className="sq-inter-chain-row" aria-hidden="true">
+        <div className="sq-inter-link sq-inter-link--left">
+          <span className="sq-chain-loop" />
+          <span className="sq-chain-loop" />
+        </div>
+        <div className="sq-inter-link sq-inter-link--right">
+          <span className="sq-chain-loop" />
+          <span className="sq-chain-loop" />
+        </div>
+      </div>
+
+      {/* 2. Lower Plaque: AI Tunnel (Suspended by the chain from DSA) */}
+      {ai && (
+        <div className="sq-hanging-card sq-hanging-card--ai">
+          <span className="sq-eyelet sq-eyelet--top-left" aria-hidden="true" />
+          <span className="sq-eyelet sq-eyelet--top-right" aria-hidden="true" />
+
+          <article className={`sq-quest sq-quest--ai ${aiStatus?.locked ? 'is-locked' : ''}`}>
+            <div className="sq-quest__copy">
+              <h3>{ai.title} <span>(Quest)</span></h3>
+              <p>{aiStatus?.text}</p>
+              {aiStatus?.percent > 0 && (
+                <span className="sq-quest__bar" role="progressbar" aria-label={`${ai.title} progress`} aria-valuenow={aiStatus.percent} aria-valuemin={0} aria-valuemax={100}>
+                  <span style={{ width: `${aiStatus.percent}%` }} />
+                </span>
+              )}
+              <button type="button" className="sq-quest__btn" onClick={() => navigate(`tunnel/${ai.id}`, { from: origin })}>
+                {aiStatus?.locked ? <><Lock size={14} /> View quest</> : <>Enter Quest <ArrowRight size={15} /></>}
+              </button>
+            </div>
+            <img className="sq-quest__art" src={`/illustrations/quest-${ai.id}.png`} alt="" />
+          </article>
+        </div>
+      )}
     </section>
   );
 }
