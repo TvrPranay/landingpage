@@ -13632,31 +13632,28 @@ h1, h2, h3, h4, h5, h6 {
 .hm-page.is-fullscreen-map {
   display: block !important;
   width: 100% !important;
-  height: 100% !important;
-  max-height: 100% !important;
+  height: calc(100vh - 64px) !important;
+  max-height: calc(100vh - 64px) !important;
   position: relative !important;
   overflow: hidden !important;
   padding: 0 !important;
   margin: 0 !important;
+  background: #0f172a !important;
 }
 
 .hm-page.is-fullscreen-map .hm-map-card {
   width: 100% !important;
   height: 100% !important;
-  max-height: 100% !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
   position: relative !important;
   overflow: hidden !important;
-  background: #a9d9ff !important;
+  background: transparent !important;
 }
 
 .hm-page.is-fullscreen-map .hm-stage {
+  position: relative !important;
   width: 100% !important;
   height: 100% !important;
-  position: relative !important;
   overflow: hidden !important;
-  aspect-ratio: auto !important;
 }
 
 .hm-page.is-fullscreen-map .hm-world {
@@ -13664,48 +13661,47 @@ h1, h2, h3, h4, h5, h6 {
   inset: 0 !important;
   width: 100% !important;
   height: 100% !important;
-  transform: none !important;
-  transition: none !important;
 }
 
 .hm-page.is-fullscreen-map .hm-art {
   width: 100% !important;
   height: 100% !important;
   object-fit: cover !important;
-  object-position: center bottom !important;
+  object-position: right center !important;
   display: block !important;
   image-rendering: -webkit-optimize-contrast !important;
 }
 
-/* Heading: Sits directly on the sky with no ugly white box */
+/* Heading: Compact, elegant and never clips */
 .hm-page.is-fullscreen-map .hm-heading {
   position: absolute !important;
-  top: 24px !important;
-  left: 28px !important;
+  top: 14px !important;
+  left: 20px !important;
   z-index: 10 !important;
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
   padding: 0 !important;
-  max-width: 460px !important;
+  max-width: 360px !important;
+  pointer-events: auto !important;
 }
 
 .hm-page.is-fullscreen-map .hm-kicker {
-  font-size: 11px !important;
+  font-size: 10px !important;
   font-weight: 800 !important;
-  letter-spacing: 0.1em !important;
+  letter-spacing: 0.08em !important;
   color: #0369a1 !important;
   text-transform: uppercase !important;
   text-shadow: 0 1px 3px rgba(255, 255, 255, 0.9) !important;
 }
 
 .hm-page.is-fullscreen-map .hm-heading h1 {
-  font-size: 32px !important;
+  font-size: 24px !important;
   font-weight: 800 !important;
   color: #0f172a !important;
-  line-height: 1.12 !important;
-  letter-spacing: -0.03em !important;
-  margin: 4px 0 8px 0 !important;
+  line-height: 1.15 !important;
+  letter-spacing: -0.02em !important;
+  margin: 2px 0 4px 0 !important;
   text-shadow: 0 1px 4px rgba(255, 255, 255, 0.95), 0 2px 8px rgba(255, 255, 255, 0.6) !important;
 }
 
@@ -13717,28 +13713,29 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .hm-page.is-fullscreen-map .hm-heading p {
-  font-size: 14px !important;
+  font-size: 11.5px !important;
   font-weight: 500 !important;
   color: #1e293b !important;
-  line-height: 1.45 !important;
+  line-height: 1.35 !important;
   text-shadow: 0 1px 3px rgba(255, 255, 255, 0.9) !important;
+  margin: 0 !important;
 }
 
 .hm-page.is-fullscreen-map .hm-toggle {
-  background: rgba(255, 255, 255, 0.94) !important;
+  background: rgba(255, 255, 255, 0.92) !important;
   backdrop-filter: blur(12px) !important;
   border: 1px solid rgba(226, 232, 240, 0.9) !important;
-  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.08) !important;
-  padding: 4px !important;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08) !important;
+  padding: 3px !important;
   border-radius: 9999px !important;
-  margin-top: 14px !important;
+  margin-top: 6px !important;
   display: inline-flex !important;
-  gap: 4px !important;
+  gap: 3px !important;
 }
 
 .hm-page.is-fullscreen-map .hm-toggle button {
-  padding: 7px 16px !important;
-  font-size: 13px !important;
+  padding: 4px 10px !important;
+  font-size: 11px !important;
   font-weight: 700 !important;
   border-radius: 9999px !important;
   color: #334155 !important;
@@ -13748,7 +13745,7 @@ h1, h2, h3, h4, h5, h6 {
 .hm-page.is-fullscreen-map .hm-toggle button.is-active {
   background: #0076f5 !important;
   color: #ffffff !important;
-  box-shadow: 0 2px 8px rgba(0, 118, 245, 0.35) !important;
+  box-shadow: 0 2px 6px rgba(0, 118, 245, 0.35) !important;
 }
 
 /* Side Quests: Suspended Single Rig with Linked Chains */
@@ -13951,7 +13948,7 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 9999px !important;
   background: #ffffff !important;
   color: #0f172a !important;
-  font-size: 11.5px !important;
+  font-size: 13.5px !important;
   font-weight: 700 !important;
   border: none !important;
   cursor: pointer !important;
@@ -13976,27 +13973,28 @@ h1, h2, h3, h4, h5, h6 {
 .hm-hot {
   position: absolute !important;
   z-index: 5 !important;
-  width: 65px !important;
-  height: 65px !important;
+  width: 96px !important;
+  height: 72px !important;
   transform: translate(-50%, -50%) !important;
   background: transparent !important;
   border: none !important;
+  border-radius: 16px !important;
   padding: 0 !important;
   cursor: pointer !important;
 }
 
 .hm-hot__ring {
   position: absolute !important;
-  inset: -6px !important;
-  border-radius: 50% !important;
+  inset: -4px !important;
+  border-radius: 20px !important;
   opacity: 0 !important;
   transition: opacity 0.2s ease, transform 0.2s ease !important;
-  background: radial-gradient(circle, rgba(56, 189, 248, 0.35) 0%, rgba(56, 189, 248, 0.1) 50%, transparent 70%) !important;
+  background: radial-gradient(circle, rgba(56, 189, 248, 0.4) 0%, rgba(56, 189, 248, 0.15) 50%, transparent 75%) !important;
 }
 
 .hm-hot:hover .hm-hot__ring {
   opacity: 1 !important;
-  transform: scale(1.1) !important;
+  transform: scale(1.05) !important;
 }
 
 .hm-hot.is-current .hm-hot__ring {
@@ -14005,33 +14003,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .hm-hot__here {
-  position: absolute !important;
-  left: 50% !important;
-  bottom: calc(100% + 2px) !important;
-  transform: translateX(-50%) !important;
-  display: flex !important;
-  flex-direction: column !important;
-  align-items: center !important;
-  gap: 2px !important;
-  pointer-events: none !important;
-  z-index: 10 !important;
-}
-
-.hm-hot__here svg {
-  color: #0076f5 !important;
-  filter: drop-shadow(0 2px 4px rgba(0, 118, 245, 0.6)) !important;
-}
-
-.hm-hot__here small {
-  background: #0076f5 !important;
-  color: #ffffff !important;
-  font-size: 10px !important;
-  font-weight: 700 !important;
-  padding: 2px 8px !important;
-  border-radius: 9999px !important;
-  white-space: nowrap !important;
-  box-shadow: 0 2px 6px rgba(0, 118, 245, 0.4) !important;
-  letter-spacing: 0.01em !important;
+  display: none !important;
 }
 .hm-hot__check-subtle {
   position: absolute !important;
@@ -14309,4 +14281,227 @@ h1, h2, h3, h4, h5, h6 {
 .pro-level-card:hover .pro-level-chevron {
   transform: translateX(2px);
   color: #0076f5;
+}
+
+
+/* ==========================================================================
+   PREMIUM GAMING-STYLE CENTRED LOCKED LEVEL MODAL (PART 6)
+   ========================================================================== */
+.tk-modal-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 99999 !important;
+  background: rgba(10, 20, 42, 0.75) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 20px !important;
+  animation: tkModalFadeIn 0.25s ease-out forwards !important;
+}
+
+.tk-modal {
+  position: relative !important;
+  width: 100% !important;
+  max-width: 460px !important;
+  background: linear-gradient(145deg, #0f1c3f 0%, #0a132c 100%) !important;
+  border: 1px solid rgba(59, 130, 246, 0.4) !important;
+  border-radius: 24px !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7), 0 0 35px rgba(11, 99, 246, 0.3) !important;
+  padding: 28px !important;
+  color: #ffffff !important;
+  animation: tkModalScaleIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  outline: none !important;
+}
+
+@keyframes tkModalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes tkModalScaleIn {
+  from { opacity: 0; transform: scale(0.92) translateY(12px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.tk-modal__head {
+  display: flex !important;
+  align-items: center !important;
+  gap: 16px !important;
+  margin-bottom: 16px !important;
+  position: relative !important;
+}
+
+.tk-modal__head h2 {
+  font-size: 20px !important;
+  font-weight: 800 !important;
+  color: #ffffff !important;
+  letter-spacing: -0.02em !important;
+  margin: 0 !important;
+}
+
+.tk-modal__close {
+  position: absolute !important;
+  right: -8px !important;
+  top: -8px !important;
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 50% !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  color: #94a3b8 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+.tk-modal__close:hover {
+  background: rgba(255, 255, 255, 0.18) !important;
+  color: #ffffff !important;
+}
+
+.tk-modal p {
+  font-size: 14px !important;
+  color: #cbd5e1 !important;
+  line-height: 1.5 !important;
+  margin: 0 0 18px 0 !important;
+}
+
+.tk-unlock-note {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 12px 16px !important;
+  background: rgba(239, 68, 68, 0.12) !important;
+  border: 1px solid rgba(239, 68, 68, 0.3) !important;
+  border-radius: 14px !important;
+  color: #fca5a5 !important;
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  margin-bottom: 24px !important;
+}
+
+.tk-unlock-note svg {
+  flex-shrink: 0 !important;
+  color: #ef4444 !important;
+}
+
+.tk-modal__actions {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 12px !important;
+}
+
+.tk-modal__actions .tk-btn--outline {
+  padding: 10px 18px !important;
+  border-radius: 12px !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  color: #e2e8f0 !important;
+  font-weight: 700 !important;
+  font-size: 14px !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+.tk-modal__actions .tk-btn--outline:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: #ffffff !important;
+}
+
+.tk-modal__actions .tk-btn--primary {
+  padding: 10px 20px !important;
+  border-radius: 12px !important;
+  background: linear-gradient(180deg, #2563eb 0%, #1d4ed8 100%) !important;
+  border: 1px solid rgba(59, 130, 246, 0.5) !important;
+  color: #ffffff !important;
+  font-weight: 800 !important;
+  font-size: 14px !important;
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  cursor: pointer !important;
+  transition: all 0.15s ease !important;
+}
+
+.tk-modal__actions .tk-btn--primary:hover {
+  background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%) !important;
+  transform: translateY(-1px) !important;
+}
+
+
+/* ==========================================================================
+   LEVEL LEARNING VIEWPORT FULLSCREEN FIX (PART 1 & PART 5)
+   ========================================================================== */
+.l1-page.st-page {
+  width: 100% !important;
+  height: calc(100vh - 64px) !important;
+  max-height: calc(100vh - 64px) !important;
+  overflow: hidden !important;
+  position: relative !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.l1-scene {
+  width: 100% !important;
+  height: 100% !important;
+  max-height: 100% !important;
+  overflow: hidden !important;
+  position: relative !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.l1-artbox {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 515px !important;
+  bottom: 84px !important; /* Space for single-row bottom journey progress */
+  overflow: hidden !important;
+}
+
+.l1-panel {
+  position: absolute !important;
+  top: 14px !important;
+  right: 18px !important;
+  bottom: 88px !important; /* Never overflows below or clips bottom progress */
+  width: 480px !important;
+  max-height: calc(100% - 102px) !important;
+  background: #ffffff !important;
+  border-radius: 20px !important;
+  box-shadow: 0 16px 40px rgba(10, 30, 80, 0.22) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  z-index: 10 !important;
+  padding: 16px 18px !important;
+}
+
+.l1-panel__body {
+  flex: 1 1 auto !important;
+  overflow-y: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  padding-right: 2px !important;
+}
+
+.l1-strip {
+  position: absolute !important;
+  left: 18px !important;
+  right: 18px !important;
+  bottom: 12px !important;
+  z-index: 15 !important;
+}
+
+.l1-strip .tk-jprogress {
+  padding: 10px 18px !important;
+  border-radius: 14px !important;
 }

@@ -22,16 +22,31 @@ export function RingProgress({ value = 0, size = 86, stroke = 9, label, fontSize
   const c = 2 * Math.PI * r;
   return (
     <div className="tk-ring" style={{ width: size, height: size }} role="img" aria-label={label ?? `${pct}% complete`}>
-      <svg width={size} height={size}>
+      <svg
+        width={size}
+        height={size}
+        viewBox={`0 0 ${size} ${size}`}
+        style={{ transform: 'rotate(-90deg)', transformOrigin: '50% 50%', overflow: 'visible' }}
+      >
         <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="#e5ebf5" strokeWidth={stroke} />
-        <circle
-          cx={size / 2} cy={size / 2} r={r} fill="none" stroke="url(#tkRingGrad)" strokeWidth={stroke} strokeLinecap="round"
-          strokeDasharray={c} strokeDashoffset={c * (1 - pct / 100)} style={{ transition: 'stroke-dashoffset 0.7s ease' }}
-        />
+        {pct > 0 && (
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={r}
+            fill="none"
+            stroke="url(#tkRingGrad)"
+            strokeWidth={stroke}
+            strokeLinecap="round"
+            strokeDasharray={c}
+            strokeDashoffset={c * (1 - pct / 100)}
+            style={{ transition: 'stroke-dashoffset 0.7s cubic-bezier(0.4, 0, 0.2, 1)' }}
+          />
+        )}
         <defs>
-          <linearGradient id="tkRingGrad" x1="0" x2="1">
-            <stop offset="0" stopColor="#0b63f6" />
-            <stop offset="1" stopColor="#3aa0ff" />
+          <linearGradient id="tkRingGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#0b63f6" />
+            <stop offset="100%" stopColor="#3aa0ff" />
           </linearGradient>
         </defs>
       </svg>

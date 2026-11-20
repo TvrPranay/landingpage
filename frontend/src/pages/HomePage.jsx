@@ -41,23 +41,32 @@ function MapHotspot({ milestone, position, onSelect, onHover, shaking }) {
 }
 
 /**
- * 4K Journey Map Artwork (3840 x 2193)
- * Exact center coordinates aligned with the 10 pedestals/badges on the clean artwork.
- * Level 4 (Start Building) & Level 5 (Advanced Building) placed on their corresponding pedestals.
+ * 4K Journey Map Artwork (3840 x 2160, 16:9)
+ * Exact hit area centers for each of the 10 fantasy mountain pathway markers:
+ * 1. Discover
+ * 2. Learn Basics
+ * 3. Learn Advanced
+ * 4. Start Building
+ * 5. Advanced Building
+ * 6. Networking
+ * 7. Interview Prep
+ * 8. Apply
+ * 9. Premium
+ * 10. Alumni Connect
  */
 const MOUNTAIN_MAP = {
   image: '/illustrations/journey-map-clean-4k.jpg',
   markers: {
-    1: { x: 23.24, y: 84.1 },   // Discover
-    2: { x: 27.15, y: 72.14 },  // Learn Basics
-    3: { x: 38.57, y: 64.44 },  // Learn Advanced
-    4: { x: 61.91, y: 66.67 },  // Start Building (swapped as requested)
-    5: { x: 49.32, y: 60.68 },  // Advanced Building (swapped as requested)
-    6: { x: 41.5, y: 48.72 },   // Networking
-    7: { x: 63.96, y: 50.94 },  // Interview Prep
-    8: { x: 50.78, y: 39.32 },  // Apply
-    9: { x: 59.77, y: 32.82 },  // Premium
-    10: { x: 66.11, y: 32.48 }, // Alumni Connect
+    1: { x: 20.51, y: 87.15 },  // Discover (Compass)
+    2: { x: 32.23, y: 78.47 },  // Learn Basics (Layers)
+    3: { x: 49.61, y: 74.65 },  // Learn Advanced (Code)
+    4: { x: 67.38, y: 69.79 },  // Start Building (Cloud)
+    5: { x: 39.26, y: 59.90 },  // Advanced Building (Grid)
+    6: { x: 61.23, y: 52.78 },  // Networking (Network)
+    7: { x: 38.87, y: 42.01 },  // Interview Prep (Trophy)
+    8: { x: 55.18, y: 35.94 },  // Apply (Document)
+    9: { x: 69.53, y: 31.25 },  // Premium (Crown)
+    10: { x: 55.47, y: 20.83 }, // Alumni Connect (Summit Temple)
   },
 };
 
